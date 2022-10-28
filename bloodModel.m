@@ -10,12 +10,16 @@ function bloodModel
     organ2(organ1out);
 end
 
-function organ1()
-
+function organ1(values)
+    %computes change in blood through organ1
+    %inputs: values - blood values coming in
+    %outputs: organ1out - blood altered by organ1
 
 end
 
-function organ2()
-
+function organ2(values)
+    %computs change in blood through organ2
+    %inputs: values - blood values coming in
+    %outputs: organ2out - blood altered by organ2
 
 end
