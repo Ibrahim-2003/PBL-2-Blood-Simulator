@@ -6,20 +6,55 @@
 function bloodModel
     %the driver
     init = %initial conditions;
-    organ1(init);
-    organ2(organ1out);
+    heart(init);
+    brain(ho);
 end
 
-function organ1(values)
-    %computes change in blood through organ1
-    %inputs: values - blood values coming in
-    %outputs: organ1out - blood altered by organ1
+function heart(values)
+    %computes change in blood through heart
+    %inputs: values - matrix of blood values coming in
+    %outputs: ho - blood values matrix altered by heart
 
 end
 
-function organ2(values)
-    %computs change in blood through organ2
+function brain(values)
+    %computs change in blood through brain
     %inputs: values - blood values coming in
-    %outputs: organ2out - blood altered by organ2
+    %outputs: bo - blood values matrix altered by brain
+
+end
+
+function lung(values)
+    %computs change in blood through lungs
+    %inputs: values - blood values coming in
+    %outputs: luo - blood values matrix altered by lungs
+
+end
+
+function liver(values)
+    %computs change in blood through liver
+    %inputs: values - blood values coming in
+    %outputs: lio - blood values matrix altered by liver
+
+end
+
+function kidney(values)
+    %computs change in blood through kidney
+    %inputs: values - blood values coming in
+    %outputs: ko - blood values matrix altered by kidney
+
+end
+
+function marrow(values)
+    %computs change in blood through bone marrow
+    %inputs: values - blood values coming in
+    %outputs: mo - blood values matrix altered by bone marrow
+
+end
+
+function spleen(values)
+    %computs change in blood through spleen
+    %inputs: values - blood values coming in
+    %outputs: so - blood values matrix altered by spleen
 
 end
