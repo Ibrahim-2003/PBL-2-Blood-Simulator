@@ -48,6 +48,7 @@ R_pas = 0.002;
 L_pas = 0.000052;
 C_pat = 3.8;
 R_pat = 0.01;
+L_pat = 0.0017;
 R_par = 0.05;
 R_pcp = 0.25;
 R_pvn = 0.006;
@@ -123,29 +124,43 @@ flowPVN = Q_pvn == (P_pvn - P_la)/R_pvn;
 flowAO = piecewise(P_lv >= P_sas, Q_ao == CQ_ao * AR_ao * sqrt(P_lv - P_sas), ...
     P_lv < P_sas, Q_ao == -CQ_ao * AR_ao * sqrt(P_sas - P_lv));
 valveAO = AR_ao == (1-cos(theta_ao))^2/(1-cos(theta_max))^2;
-angleAO = diff(theta_ao,2) == K_p_ao * (P_lv - P_sas)*cos(theta_ao)-K_f_ao*diff(theta_ao);
+[angleAO] = odeToVectorField(diff(theta_ao,2) == K_p_ao * (P_lv - P_sas)*cos(theta_ao)-K_f_ao*diff(theta_ao));
 
 flowMI = piecewise(P_la >= P_lv, CQ_mi == CQ_mi * AR_mi * sqrt(P_la - P_lv), ...
     P_la < P_lv, Q_mi == -CQ_mi * AR_mi * sqrt(P_lv - P_la));
 valveMI = AR_mi == (1-cos(theta_mi))^2/(1-cos(theta_max))^2;
-angleMI = diff(theta_mi,2) == K_p_mi * (P_la - P_lv)*cos(theta_mi)-K_f_mi*diff(theta_mi);
+[angleMI] = odeToVectorField(diff(theta_mi,2) == K_p_mi * (P_la - P_lv)*cos(theta_mi)-K_f_mi*diff(theta_mi));
 
 flowPO = piecewise(P_rv >= P_pas, CQ_po == CQ_po * AR_po * sqrt(P_rv - P_pas), ...
     P_rv < P_pas, Q_po == -CQ_po * AR_po * sqrt(P_pas - P_rv));
 valvePO = AR_po == (1-cos(theta_po))^2/(1-cos(theta_max))^2;
-anglePO = diff(theta_po,2) == K_p_po * (P_rv - P_pas)*cos(theta_po)-K_f_po*diff(theta_po);
+[anglePO] = odeToVectorField(diff(theta_po,2) == K_p_po * (P_rv - P_pas)*cos(theta_po)-K_f_po*diff(theta_po));
 
 flowTI = piecewise(P_ra >= P_rv, CQ_ti == CQ_ti * AR_ti * sqrt(P_ra - P_rv), ...
     P_ra < P_rv, Q_ti == -CQ_ti * AR_ti * sqrt(P_rv - P_ra));
 valveTI = AR_ti == (1-cos(theta_ti))^2/(1-cos(theta_max))^2;
-angleTI = diff(theta_ti,2) == K_p_ti * (P_ra - P_rv)*cos(theta_ti)-K_f_ti*diff(theta_ti);
+[angleTI] = odeToVectorField(diff(theta_ti,2) == K_p_ti * (P_ra - P_rv)*cos(theta_ti)-K_f_ti*diff(theta_ti));
 
-odes = [ebarV;ebarA;elastanceLV;elastanceLA;elastanceRV;elastanceRA;volumeLV;volumeLA
+allEq = [ebarV;ebarA;elastanceLV;elastanceLA;elastanceRV;elastanceRA;volumeLV;volumeLA
         volumeRV;volumeRA;pressureLV;pressureRV;pressureLA;pressureRA;pressureSAS;
         pressureSAT;pressureSVN;pressurePAS;pressurePAT;pressurePVN;flowSAS;flowSAT;
         flowSVN;flowPAS;flowPAT;flowPVN;flowAO;valveAO;angleAO;flowMI;valveMI;angleMI;
         flowPO;valvePO;anglePO;flowTI;valveTI;angleTI];
-S = dsolve(odes)
+
+odes1 = [volumeLV;volumeLA;volumeRV;volumeRA;pressureSAS;pressureSAT;pressureSVN;pressurePAS;pressurePAT;pressurePVN;flowSAS;flowSAT;
+        flowPAS;flowPAT];
+
+odes2 = [pressureSAS;pressurePAS;pressurePAT;flowSAS;flowSAT;flowPAT];
+
+odes3 = [pressureSAT;pressurePAS;pressurePAT;flowSAT;flowPAS;flowPAT];
+
+%M = matlabFunction(odes,'vars',{'t','Y'})
+cond1 = V_lv(0) == V_lv0;
+cond2 = V_rv(0) == V_rv0;
+conds = [cond1; cond2];
+e = dsolve(odes3,conds);
+
+sol1 = e.Q_sat
 
 end
 %Ignore the Functions
@@ -154,42 +169,45 @@ function Q_po = CardiacOutput(t)
 
 end
 
-function elastance = ActivationFunction(t,ventricle)
+function elastance = ActivationFunction(t)
+%Elastance: (1,1) = left ventricle
+
 T_s1 = 0.3;
 T_s2 = 0.45;
 T_pwb = 0.92;
 T_pww = 0.09;
+T = 1.0;
 E_lv_s = 2.5;
 E_lv_d = 0.1;
 E_la_max = 0.25;
 E_la_min = 0.15;
 
+E_rv_s = 1.15;
+E_rv_d = 0.1;
+E_ra_max = 0.25;
+E_ra_min = 0.15;
 
-% make t a 
-while t > 1
-    t = t - 1;
+
+t = mod(t,T);
+if t < T_s1
+    ebar_v = 1 - cos(t/T_s1 * pi);
+elseif t < T_s2
+    ebar_v = 1 + cos((t-T_s1)/(T_s2 - T_s1) * pi);
+else
+    ebar_v = 0;
 end
 
-if ventricle 
-    if t < T_s1
-        ebar = 1 - cos(t/T_s1 * pi);
-    elseif t < T_s2
-        ebar = 1 + cos((t-T_s1)/(T_s2 - T_s1) * pi);
-    else 
-        ebar = 0;
-    end
-    
-    elastance = E_lv_d + (E_lv_s - E_lv_d)/2 * ebar;
+elastance(1,1) = E_lv_d + (E_lv_s - E_lv_d)/2 * ebar_v;
+elastance(2,1) = E_rv_d + (E_rv_s - E_rv_d)/2 * ebar_v;
 
-else %if ventricle is false (if atrium)
-    if t < T_pwb
-        ebar = 0;
-    elseif t < T_pwb + T_pww
-        ebar = 1 - cos((t-T_pwb)/T_pww * 2 * pi);
-    end
-
-    elastance = E_la_min + (E_la_max - E_la_min)/2 * ebar;
+if t < T_pwb
+    ebar_a = 0;
+elseif t < T_pwb + T_pww
+    ebar_a = 1 - cos((t-T_pwb)/T_pww * 2 * pi);
 end
+
+elastance(1,2) = E_la_min + (E_la_max - E_la_min)/2 * ebar_a;
+
 
 end
 
