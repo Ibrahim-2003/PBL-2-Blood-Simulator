@@ -141,9 +141,6 @@ S.otherEquations
 
 isLowIndexDAE(eqs, vars)
 
-[ODEs,constraints] = reduceDAEToODE(eqs,vars)
-[massM,f] = massMatrixForm(ODEs,vars)
-
 F = daeFunction(eqs, vars, [Elv_s Elv_d Cpas Cpat Cpvn Erv_s Erv_d Csas...
                             Csat Csvn Rpas Lpas Rpat Rpar Rpcp Rpvn Lsas...
                             Rsas Rsat Lsat Rsar Rscp Rsvn CQao CQmi Plv_0...
@@ -184,10 +181,9 @@ yp0_est = [zeros(32,1)];
 
 fixedVars = [zeros(32,1)];
 fixedVars(1,1) = 1;
-y0_est(26:32,1) = 1;
-y0_est(22:25,1) = 0.42*pi;
+fixedVars(32,1) = 1;
 
-[y0, yp0] = decic(f, t0, y0_est, [], [zeros(32,1)], [], opt)
+[y0, yp0] = decic(f, t0, y0_est, [], [zeros(32,1)], yp0_est, opt)
 % [y0,yp0] = decic(eqs,vars,constraintEqs,t0,y0_est,fixedVars,yp0_est,opt);
 
 
@@ -196,13 +192,9 @@ Qao = y(:,1);
 Qsas = y(:,2);
 Qsat = y(:,3);
 [row, col] = size(y);
-for i=1:col
-    subplot(8,4,i)
-    plot(t,y(:,i));
-    tit = sprintf("Solution to %s",vars(i));
-    title(tit);
-end
-
+for i=1:
+plot(t,y);
+title('Solution to System of Differential Algebraic Equations');
 
 % [ODEs,constraints] = reduceDAEToODE(eqns,vars);
 % 
