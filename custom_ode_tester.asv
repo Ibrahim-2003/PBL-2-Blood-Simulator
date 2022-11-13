@@ -29,61 +29,12 @@ plot(ts,ys(:,1),'b')              % plot solution y(t)
 title('Solution y(t) of IVP')
 xlabel('t'); grid on
 
-plot_left_elastances();
-plot_right_elastances();
-
-end
-
-function plot_left_elastances
-
-ts = [0:0.0001:2];
-
-for i=1:length(ts)
-    elas(i) = ela(ts(i));
-end
-
-figure
-plot(ts,elas);
-hold on
-for i=1:length(ts)
-    elav(i) = elv(ts(i));
-end
-plot(ts,elav);
-ylim([0 3]);
-title('Elastances of Left Side of Heart');
-xlabel('Time (s)');
-legend('Left Atrium', 'Left Ventricle');
-grid off
-
-end
-
-function plot_right_elastances
-
-ts = [0:0.0001:2];
-
-for i=1:length(ts)
-    elas(i) = era(ts(i));
-end
-
-figure
-plot(ts,elas);
-hold on
-for i=1:length(ts)
-    elav(i) = erv(ts(i));
-end
-plot(ts,elav);
-ylim([0 3]);
-title('Elastances of Right Side of Heart');
-xlabel('Time (s)');
-legend('Right Atrium', 'Right Ventricle');
-grid off
-
 end
 
 function elastance = ela(t)
 
-T = 1;
-T_pwb = 0.91;
+T = 0.9999;
+T_pwb = 0.92;
 T_pww = 0.09;
 E_la_max = 0.25;
 E_la_min = 0.15;
@@ -93,7 +44,7 @@ t = mod(t,T);
 if t < T_pwb
     elastance = E_la_min;
 elseif t < (T_pwb + T_pww) && t >= T_pwb
-    elastance = E_la_min + (E_la_max - E_la_min)/2 * (1-cos(((t-T_pwb)/T_pww)*2*pi));
+    elastance = E_la_min + (E_la_max - E_la_min)/2 * (1-cos((t-T_pwb)/T_pwb)*2*pi);
 else
     elastance = E_la_min;
 end
@@ -102,7 +53,7 @@ end
 
 function elastance = elv(t)
 
-T = 1;
+T = 0.9999;
 T_s1 = 0.3;
 T_s2 = 0.45;
 E_lv_s = 2.5;
@@ -120,47 +71,7 @@ end
 
 end
 
-function elastance = era(t)
-
-T = 1;
-T_pwb = 0.91;
-T_pww = 0.09;
-E_ra_max = 0.25;
-E_ra_min = 0.15;
-
-t = mod(t,T);
-
-if t < T_pwb
-    elastance = E_ra_min;
-elseif t < (T_pwb + T_pww) && t >= T_pwb
-    elastance = E_ra_min + (E_ra_max - E_ra_min)/2 * (1-cos(((t-T_pwb)/T_pww)*2*pi));
-else
-    elastance = E_ra_min;
-end
-
-end
-
-function elastance = erv(t)
-
-T = 1;
-T_s1 = 0.3;
-T_s2 = 0.45;
-E_rv_s = 1.15;
-E_rv_d = 0.1;
-
-t = mod(t,T);
-
-if t < T_s1
-    elastance = E_rv_d + (E_rv_s - E_rv_d)/2*(1-cos(t/T_s1 * pi));
-elseif t >= T_s1 && t < T_s2
-    elastance = E_rv_d + (E_rv_s - E_rv_d)/2*(1+cos((t-T_s1)/(T_s2-T_s1) * pi));
-else
-    elastance = E_rv_d;
-end
-
-end
-
-function dydt = RHS(t,y)
+function dzdt = RHS(t,z)
 % Defines system of ODEs for problem
 
 T = 1;
@@ -176,9 +87,6 @@ E_rv_s = 1.15;
 E_rv_d = 0.1;
 E_ra_max = 0.25;
 E_ra_min = 0.15;
-
-theta_ao_max = 0.42*pi;
-theta_po_max = 0.42*pi;
 
 % Implements the piecewise function, ela
 tmod = mod(t,T);
@@ -202,15 +110,12 @@ era3 = E_ra_min;
 era = era1.*(0<tmod & tmod<T_pwb) +era2.*(T_pwb<=tmod & tmod<(T_pwb + T_pww))+era3.*...
         ((T_pwb + T_pww)<=tmod & tmod<T);
     
-% Implements the piecewise function, erv
-erv1 = E_rv_d + (E_rv_s - E_rv_d)/2*(1-cos(tmod/T_s1 * pi));
-erv2 = E_rv_d + (E_rv_s - E_rv_d)/2*(1+cos((tmod-T_s1)/(T_s2-T_s1) * pi));
-erv3 = E_rv_d;
-erv = erv1.*(0<tmod & tmod<T_s1) +erv2.*(T_s1<=tmod & tmod<T_s2)+erv3.*...
+% Implements the piecewise function, e
+elv1 = E_lv_d + (E_lv_s - E_lv_d)/2*(1-cos(tmod/T_s1 * pi));
+elv2 = E_lv_d + (E_lv_s - E_lv_d)/2*(1+cos((tmod-T_s1)/(T_s2-T_s1) * pi));
+elv3 = E_lv_d;
+elv = elv1.*(0<tmod & tmod<T_s1) +elv2.*(T_s1<=tmod & tmod<T_s2)+elv3.*...
         (T_s2<=tmod & tmod<T);
-    
-
-
     
 
     

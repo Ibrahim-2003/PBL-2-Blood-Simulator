@@ -4,7 +4,7 @@ dt = 0.0001;
 T = 1;
 T_s1 = 0.3;
 T_s2 = 0.45;
-T_pwb = 0.92;
+T_pwb = 0.91;
 T_pww = 0.09;
 
 %Parameters for the heart
@@ -66,7 +66,7 @@ K_p_ti = 5800;
 K_f_ti = 45;
 
 t0 = 0;  y0 = [0;0];
-[ts,ys] = ode45(@test,[t0,T],y0)
+[ts,ys] = ode45(@test,[t0,T],y0);
 end
 
 function y = test(t,y)
@@ -98,7 +98,7 @@ P_ra = P_ra_0 + e(4)*(V_ra - V_ra_0);
 Q_svn = (P_svn - P_ra)/R_svn;
 Q_pvn = (P_pvn - P_la)/R_pvn;
 
-Blood volume in each chamber of the heart
+% Blood volume in each chamber of the heart
 dV_lv = Q_mi - Q_ao;
 dV_la = Q_pvn - Q_mi;
 dV_rv = Q_ti - Q_po;
@@ -149,10 +149,10 @@ tf = t;
 
 y0 = [0;0];
 
-[~,ys_ao] = ode45(f,[t0 tf],y0);
-[~,ys_mi] = ode45(f,[t0 tf],y0);
-[~,ys_po] = ode45(f,[t0 tf],y0);
-[~,ys_ti] = ode45(f,[t0 tf],y0);
+[~,ys_ao] = ode45(f_ao,[t0 tf],y0);
+[~,ys_mi] = ode45(f_mi,[t0 tf],y0);
+[~,ys_po] = ode45(f_po,[t0 tf],y0);
+[~,ys_ti] = ode45(f_ti,[t0 tf],y0);
 
 y = [ys_ao(end,1); ys_mi(end,1), ys_po(end,1),ys_ti(end,1)];
 end
