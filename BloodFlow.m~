@@ -130,14 +130,14 @@ end
 
 disp(length(eqs));
 disp(length(vars));
-[eqs, vars, S] = reduceRedundancies(eqs, vars)
-
-disp(length(eqs));
-disp(length(vars));
-S.solvedEquations
-S.constantVariables
-S.replacedVariables
-S.otherEquations
+% [eqs, vars, S] = reduceRedundancies(eqs, vars)
+% 
+% disp(length(eqs));
+% disp(length(vars));
+% S.solvedEquations
+% S.constantVariables
+% S.replacedVariables
+% S.otherEquations
 
 isLowIndexDAE(eqs, vars)
 
@@ -155,7 +155,7 @@ F = daeFunction(eqs, vars, [Elv_s Elv_d Cpas Cpat Cpvn Erv_s Erv_d Csas...
                             Kf_ti Kp_pv Kf_pv theta_ao_max theta_po_max...
                             theta_ti_max theta_mi_max Rsm Rbrain Rkid...
                             Rliv Rsp Rint T Tpwb Tpww Ts1 Ts2 Lpat ...
-                            ela era elv erv])
+                            ela era elv erv]);
                         
 disp(vars);
                         
@@ -179,7 +179,7 @@ tfinal = 1;
                         
 
 % Note: Need to figure out decic function for accurate results
-y0_est = [zeros(32,1)];
+y0_est = [ones(32,1)];
 y0_est(1,1) = 15;
 y0_est(5,1) = 15;
 y0_est(6,1) = 45;
@@ -192,10 +192,19 @@ y0_est(23,1) = 0;
 y0_est(24,1) = 0;
 y0_est(25:26,1) = 0.42*pi;
 
+
 fixedVars = [zeros(32,1)];
 fixedVars(1,1) = 1;
+fixedVars(5:6,1) = 1;
+fixedVars(12,1) = 1;
+fixedVars(15,1) = 1;
+fixedVars(19,1) = 1;
+fixedVars(20:21,1) = 1;
+fixedVars(23:26,1) = 1;
 
-[y0, yp0] = decic(f, t0, [ones(32,1)]*0.3, [], [zeros(32,1)], [], opt)
+disp(length(f([0:0.0001:]));
+
+[y0, yp0] = decic(f, t0, y0_est, [zeros(32,1)], [], [], opt)
 % [y0,yp0] = decic(eqs,vars,constraintEqs,t0,y0_est,fixedVars,yp0_est,opt);
 
 
