@@ -1,4 +1,4 @@
-t = [0:0.0001:20];
+t = [0:0.01:10];
 elax = [zeros(length(t),1)];
 elvx = [zeros(length(t),1)];
 erax = [zeros(length(t),1)];
@@ -13,21 +13,22 @@ end
 disp(size(elax'))
 disp(size(t))
 
-ela = [t elax']
+ela = [t elax'];
+disp(size(ela))
 
 % ela=timeseries(elax,t); % Create time series data
-% era=timeseries(erax,t);
-% elv=timeseries(elvx,t);
-% erv=timeseries(ervx,t);
-% 
-% dataSet=Simulink.SimulationData.Dataset(ela); % Create Simulink data set
-% save('ela.mat','dataSet');% Save it to MAT-file
-% dataSet=Simulink.SimulationData.Dataset(era); % Create Simulink data set
-% save('era.mat','dataSet');% Save it to MAT-file
-% dataSet=Simulink.SimulationData.Dataset(elv); % Create Simulink data set
-% save('elv.mat','dataSet');% Save it to MAT-file
-% dataSet=Simulink.SimulationData.Dataset(erv); % Create Simulink data set
-% save('erv.mat','dataSet');% Save it to MAT-file
+era=timeseries(erax,t);
+elv=timeseries(elvx,t);
+erv=timeseries(ervx,t);
+
+dataSet=Simulink.SimulationData.Dataset(ela); % Create Simulink data set
+save('ela.mat','dataSet');% Save it to MAT-file
+dataSet=Simulink.SimulationData.Dataset(era); % Create Simulink data set
+save('era.mat','dataSet');% Save it to MAT-file
+dataSet=Simulink.SimulationData.Dataset(elv); % Create Simulink data set
+save('elv.mat','dataSet');% Save it to MAT-file
+dataSet=Simulink.SimulationData.Dataset(erv); % Create Simulink data set
+save('erv.mat','dataSet');% Save it to MAT-file
 % 
 % simOut=sim('flow_circuit');
 % voltage = simOut.voltage1.Data;
@@ -40,7 +41,7 @@ title('Elastance of Right Atrium');
 ylabel('Elastance (mmHg/mL)');
 xlabel('Time (s)');
 subplot(2,2,2);
-plot(ela(:,1),ela(:,2));
+plot(ela(:,1:1001),ela(:,1002:2002));
 title('Elastance of Left Atrium');
 ylabel('Elastance (mmHg/mL)');
 xlabel('Time (s)');
