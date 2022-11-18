@@ -82,19 +82,34 @@ set_param('CirculationCircuitv2021_v2/L_pas', 'l', L_pas);
 set_param('CirculationCircuitv2021_v2/L_sat', 'l', L_sat);
 set_param('CirculationCircuitv2021_v2/L_pat', 'l', L_pat);
 
-set_param('CirculationCircuitv2021_v2/Heart_L', 'V1', heart_l(1));
-set_param('CirculationCircuitv2021_v2/Heart_L', 'V2', heart_l(2));
-set_param('CirculationCircuitv2021_v2/Heart_L', 'TD', heart_l(3));
-set_param('CirculationCircuitv2021_v2/Heart_L', 'TF', heart_l(4));
-set_param('CirculationCircuitv2021_v2/Heart_L', 'pW', heart_l(5));
-set_param('CirculationCircuitv2021_v2/Heart_L', 'PER', heart_l(6));
+v1l = get_param('CirculationCircuitv2021/Heart_L', 'V1');
+v2l = get_param('CirculationCircuitv2021/Heart_L', 'V2');
+tdl = get_param('CirculationCircuitv2021/Heart_L', 'TD');
+tfl = get_param('CirculationCircuitv2021/Heart_L', 'TF');
+pwl = get_param('CirculationCircuitv2021/Heart_L', 'pW');
+perl = get_param('CirculationCircuitv2021/Heart_L', 'PER');
 
-set_param('CirculationCircuitv2021_v2/Heart_R', 'V1', heart_r(1));
-set_param('CirculationCircuitv2021_v2/Heart_R', 'V2', heart_r(2));
-set_param('CirculationCircuitv2021_v2/Heart_R', 'TD', heart_r(3));
-set_param('CirculationCircuitv2021_v2/Heart_R', 'TF', heart_r(4));
-set_param('CirculationCircuitv2021_v2/Heart_R', 'pW', heart_r(5));
-set_param('CirculationCircuitv2021_v2/Heart_R', 'PER', heart_r(6));
+v1r = get_param('CirculationCircuitv2021/Heart_R', 'V1');
+v2r = get_param('CirculationCircuitv2021/Heart_R', 'V2');
+tdr = get_param('CirculationCircuitv2021/Heart_R', 'TD');
+tfr = get_param('CirculationCircuitv2021/Heart_R', 'TF');
+pwr = get_param('CirculationCircuitv2021/Heart_R', 'pW');
+perr = get_param('CirculationCircuitv2021/Heart_R', 'PER');
+
+set_param('CirculationCircuitv2021_v2/Heart_L', 'V1', v1l);
+set_param('CirculationCircuitv2021_v2/Heart_L', 'V2', v2l);
+set_param('CirculationCircuitv2021_v2/Heart_L', 'TD', tdl);
+set_param('CirculationCircuitv2021_v2/Heart_L', 'TF', tfl);
+set_param('CirculationCircuitv2021_v2/Heart_L', 'pW', pwl);
+set_param('CirculationCircuitv2021_v2/Heart_L', 'PER', perl);
+
+ 
+set_param('CirculationCircuitv2021_v2/Heart_R', 'V1', v1r);
+set_param('CirculationCircuitv2021_v2/Heart_R', 'V2', v2r);
+set_param('CirculationCircuitv2021_v2/Heart_R', 'TD', tdr);
+set_param('CirculationCircuitv2021_v2/Heart_R', 'TF', tfr);
+set_param('CirculationCircuitv2021_v2/Heart_R', 'pW', pwr);
+set_param('CirculationCircuitv2021_v2/Heart_R', 'PER', perr);
 
 simOut=sim('CirculationCircuitv2021_v2'); % Loads and runs model
 
@@ -171,7 +186,7 @@ title('Q_{sar}');
 xlabel('Time (s)');
 ylabel('Flow Rate (mL/s)');
 
-subplot(2,2,1)
+subplot(2,2,4)
 plot(time, Q_scp);
 title('Q_{scp}');
 xlabel('Time (s)');
