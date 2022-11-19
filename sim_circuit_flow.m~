@@ -127,14 +127,12 @@ Q_sat = simOut.Q_sat.signals.values;
 Q_sar = simOut.Q_sar.signals.values;
 Q_scp = simOut.Q_scp.signals.values;
 
-V_sas = simOut.V_sas.signals.values;
-V_sat = simOut.V_sat.signals.values;
-V_sar = simOut.V_sar.signals.values;
-V_scp = simOut.V_scp.signals.values;
+Q_sas = simOut.Q_sas.signals.values;
+Q_sat = simOut.Q_sat.signals.values;
+Q_sar = simOut.Q_sar.signals.values;
+Q_scp = simOut.Q_scp.signals.values;
 
-% ----------------------------------------------------------
-% Heart Dynamics
-% ----------------------------------------------------------
+
 figure
 subplot(2,3,1)
 plot(time,Q_right_heart);
@@ -174,59 +172,30 @@ ylabel('Blood Pressure (mmHg)');
 
 sgtitle('Heart Blood Flow Dynamics');
 
-
-% ----------------------------------------------------------
-% Systemic Loop Dynamics
-% ----------------------------------------------------------
 figure
-subplot(4,2,1)
+subplot(2,2,1)
 plot(time, Q_sas);
 title('Q_{sas}');
 xlabel('Time (s)');
 ylabel('Flow Rate (mL/s)');
 
-subplot(4,2,3)
+subplot(2,2,2)
 plot(time, Q_sat);
 title('Q_{sat}');
 xlabel('Time (s)');
 ylabel('Flow Rate (mL/s)');
 
-subplot(4,2,5)
+subplot(2,2,3)
 plot(time, Q_sar);
 title('Q_{sar}');
 xlabel('Time (s)');
 ylabel('Flow Rate (mL/s)');
 
-subplot(4,2,7)
+subplot(2,2,4)
 plot(time, Q_scp);
 title('Q_{scp}');
 xlabel('Time (s)');
 ylabel('Flow Rate (mL/s)');
-
-subplot(4,2,2)
-plot(time, V_sas);
-title('V_{sas}');
-xlabel('Time (s)');
-ylabel('Flow (mL)');
-
-subplot(4,2,4)
-plot(time, V_sat);
-title('V_{sat}');
-xlabel('Time (s)');
-ylabel('Flow (mL)');
-
-subplot(4,2,6)
-plot(time, V_sar);
-title('V_{sar}');
-xlabel('Time (s)');
-ylabel('Flow (mL)');
-
-subplot(4,2,8)
-plot(time, V_scp);
-title('V_{scp}');
-xlabel('Time (s)');
-ylabel('Flow (mL)');
-
 
 sgtitle('Systemic Circuit Blood Flow Rates');
 
