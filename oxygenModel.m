@@ -7,20 +7,20 @@ function oxygenModel
     %the driver
     %setting up initial values, need to compare this with the flow model
     time = transpose(1:5);
-    flow = ones(5,1);     
-    vol = zeros(5,1); 
-    vol(1,1) = 5000; %mL
-    pressure = zeros(5,1);
-    pressure(1,1) = 15; %mmHg
-    oconca = 0.195*vol;
-    oconc = 0.195*vol;
-    oconcv = 0.145*vol;
-    co2conc = 0.492*vol;
 
-    init = table(time,flow,vol,pressure,oconca,oconc,oconcv,co2conc) %initial values vector
-    ho = heart(init);
+    %init = table(time,flow,vol,pressure,oconca,oconc,oconcv,co2conc) %initial values vector
+    %flow = init.flow
+    %ho = heart(init);
     %bo = brain(ho);
     
+    tspan = [0 5];
+    y0 = 975;
+    [t,y] = ode45(@heartoxygencons,tspan,y0)
+    plot(t,y)
+    %x = linspace(0,20,250);
+    %y = deval(sol,x);
+
+    %plot(x,y)
 end
 
 function ho = heart(values)
@@ -31,14 +31,14 @@ function ho = heart(values)
     ho = values;
     t = ho.time;
 
-    %Simple model
-    %oxygen consumption
-    ocons = ho.oconc - 10*t;
-    ho.oconc = ocons;
-    %co2 generation, assuming all o2 consumption goes towards making co2
-    co2gen = ho.co2conc + ocons;
-    ho.co2conc = co2gen;
-    ho
+%     %Simple model
+%     %oxygen consumption
+%     ocons = ho.oconc - 10*t;
+%     ho.oconc = ocons;
+%     %co2 generation, assuming all o2 consumption goes towards making co2
+%     co2gen = ho.co2conc + ocons;
+%     ho.co2conc = co2gen;
+%     ho
     
     %My attempt at the model from the paper
     %we might wanna specify these in the driver or just assume that they
@@ -48,15 +48,40 @@ function ho = heart(values)
     age = 21;
     OP0 = 88.362 + 13.397*weight + 4.799*height - 5.677*age; %BMR
 
-    sigmaO2 = (ho.oconca(1,:) - (OP0/ho.flow(1,:)))/ho.oconc(1,:);
-    OP = -33.1*t;
-    Qdot = 150*t;
-
     %trying the ODE
-    syms O2(t) 
-    ode = diff(O2,t) == (OP + Qdot.*(ho.oconca-sigmaO2.*ho.oconc))./331;
+    %syms O2(t) OP(t) Qdot(t) sigmaO2 t
+    sigmaO2 = (ho.oconca(1,:) - (OP0/ho.flow(1,:)))/ho.oconc(1,:);
+    OP(t) = -33.1*t;
+    Qdot(t) = 150*t;
+    ode = diff(O2,t) == (OP(t) + Qdot(t).*(ho.oconca-sigmaO2.*ho.oconc))./331;
+    ode = matlabFunction(ode);
     O2sol(t) = dsolve(ode)
 
+end
+
+function dy = heartoxygencons(t,y)
+    flow = 1;     
+    vol = 5000; %mL
+    pressure = 15; %mmHg
+    oconca = 0.195*vol;
+    oconcv = 0.145*vol;
+    co2conc = 0.492*vol;
+
+%     oconca = values.oconca;
+%     flow = values.flow;
+%     oconc = values.oconc;
+
+    weight = 150;
+    height = 180;
+    age = 21;
+    OP0 = 88.362 + 13.397*weight + 4.799*height - 5.677*age; %BMR
+
+    %trying the ODE
+    %syms O2(t) OP(t) Qdot(t) sigmaO2 t
+    sigmaO2 = (oconca - (OP0/flow))/y;
+    OP = -33.1*t;
+    Qdot = 150*t;
+    dy = (OP + Qdot.*(oconca-sigmaO2.*y))./331;
 end
 
 function bo = brain(values)
