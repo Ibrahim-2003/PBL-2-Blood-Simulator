@@ -13,9 +13,9 @@ function oxygenModel
     %ho = heart(init);
     %bo = brain(ho);
     
-    tspan = [0 5];
+    tspan = 0:0.0001:0.1120;
     y0 = 975;
-    [t,y] = ode45(@heartoxygencons,tspan,y0)
+    [t,y] = ode45(@heartoxygencons,tspan,y0);
     plot(t,y)
     %x = linspace(0,20,250);
     %y = deval(sol,x);
@@ -75,12 +75,69 @@ function dy = heartoxygencons(t,y)
     height = 180;
     age = 21;
     OP0 = 88.362 + 13.397*weight + 4.799*height - 5.677*age; %BMR
+    
+%     v1l = '120';
+%     v2l = '10';
+%     tdl = '0';
+%     tfl = '0.5';
+%     trl = '0.5';
+%     pwl = '0.25';
+%     perl = '1.5';
+%     v1r = '25';
+%     v2r = '4';
+%     tdr = '0';
+%     tfr = '0.5';
+%     trr = '0.5';
+%     pwr = '0.25';
+%     perr = '1.5';
+%     C_sas = '0.08';
+%     L_sas = '0.000062';
+%     R_sas = '0.003';
+%     L_sat = '0.0017';
+%     C_sat = '1.6';
+%     R_sat = '0.05';
+%     R_sar = '0.5';
+%     R_scp = '0.52';
+%     R_brain = '1';
+%     R_liver = '1';
+%     R_spleen = '1';
+%     R_kidney = '1';
+%     R_svn = '0.075';
+%     C_pas = '0.18';
+%     R_pas = '0.002';
+%     L_pas = '0.000052';
+%     C_pat = '3.8';
+%     R_pat = '0.01';
+%     L_pat = '0.0017';
+%     R_par = '0.05';
+%     R_pcp = '0.25';
+%     C_pvn = '20.5';
+%     R_pvn = '0.006';
+% 
+%     %sim_circuit_flow;
+% 
+%     [time, Q_right_heart, Q_left_heart, V_left_heart,...
+%             V_right_heart, P_right_heart, P_left_heart, Q_sas, Q_sat,...
+%             Q_sar, Q_scp, V_sas, V_sat, V_sar, V_scp, P_sas, P_sat,...
+%             P_sar, P_scp, Q_svn, V_svn, P_svn, Q_organs, V_organs,...
+%             P_organs, Q_brain, Q_kidney, Q_spleen, Q_liver, V_brain,...
+%             V_kidney, V_spleen, V_liver, Q_pas, Q_pat, Q_par, Q_pcp,...
+%             V_pas, V_pat, V_par, V_pcp, P_pas, P_pat, P_par, P_pcp,...
+%             Q_pvn, V_pvn, P_pvn] = simulinkSimulator(...
+%                             v1l, v2l, tdl, tfl, trl, pwl, perl, v1r, v2r, tdr,...
+%                             tfr, trr, pwr, perr, C_sas, L_sas, R_sas, L_sat,...
+%                             C_sat, R_sat, R_sar, R_scp, R_brain, R_liver,...
+%                             R_spleen, R_kidney, R_svn, C_pas,...
+%                             R_pas, L_pas, C_pat, R_pat, L_pat, R_par, R_pcp,...
+%                             C_pvn, R_pvn);
 
     %trying the ODE
     %syms O2(t) OP(t) Qdot(t) sigmaO2 t
-    sigmaO2 = (oconca - (OP0/flow))/y;
-    OP = -33.1*t;
-    Qdot = 150*t;
+    sigmaO2 = (oconca - (OP0/flow))/975;
+    OP = -0.3;
+    %disp(size(Q_left_heart))
+    load("Q_left_heart.mat");
+    Qdot = Q_left_heart(round(t/0.0001,0)+1);
     dy = (OP + Qdot.*(oconca-sigmaO2.*y))./331;
 end
 
