@@ -21,10 +21,12 @@ C_sat = '1.6';
 R_sat = '0.05';
 R_sar = '0.5';
 R_scp = '0.52';
-R_brain = '1';
-R_liver = '1';
-R_spleen = '1';
-R_kidney = '1';
+
+R_brain = '6.814';
+R_liver = '5.4';
+R_spleen = '0.28865';
+R_kidney = '4.91';
+
 R_svn = '0.075';
 C_pas = '0.18';
 R_pas = '0.002';
@@ -152,7 +154,7 @@ set_param('CirculationCircuitv2021_v3/Heart_R', 'TF', trr);
 set_param('CirculationCircuitv2021_v3/Heart_R', 'pW', pwr);
 set_param('CirculationCircuitv2021_v3/Heart_R', 'PER', perr);
 
-simOut=sim('CirculationCircuitv2021_v3', 'StartTime','0','StopTime','10',...
+simOut=sim('CirculationCircuitv2021_v3', 'StartTime','0','StopTime','60',...
             'FixedStep','0.0001'); % Loads and runs model
 
 % Reads in results of Simulink model
@@ -181,17 +183,23 @@ Q_svn = simOut.Q_svn.signals.values;
 V_svn = simOut.V_svn.signals.values;
 P_svn = simOut.P_svn.signals.values;
 
-Q_organs = simOut.Q_organs.signals.values;
-V_organs = simOut.V_organs.signals.values;
 P_organs = simOut.P_organs.signals.values;
-Q_brain = P_organs./str2double(R_brain);
-Q_kidney = P_organs./str2double(R_kidney);
-Q_spleen = P_organs./str2double(R_spleen);
-Q_liver = P_organs./str2double(R_liver);
-V_brain = cumtrapz(Q_brain);
-V_kidney = cumtrapz(Q_kidney);
-V_spleen = cumtrapz(Q_spleen);
-V_liver = cumtrapz(Q_liver);
+V_organs = zeros(length(P_organs),1);
+
+Req = 1/((1/str2double(R_liver)) + (1/str2double(R_spleen)) + ...
+        (1/str2double(R_kidney)) + (1/str2double(R_brain)));
+
+V_brain = (V_left_heart + V_right_heart).*0.15;
+V_kidney = (V_left_heart + V_right_heart).*0.25;
+V_spleen = (V_left_heart + V_right_heart).*0.10;
+V_liver = (V_left_heart + V_right_heart).*0.20;
+V_organs = (V_left_heart + V_right_heart);
+
+Q_brain = gradient(V_brain(:)) ./ gradient(time(:));
+Q_kidney = gradient(V_kidney(:)) ./ gradient(time(:));
+Q_spleen = gradient(V_spleen(:)) ./ gradient(time(:));
+Q_liver = gradient(V_liver(:)) ./ gradient(time(:));
+Q_organs = gradient(V_organs(:)) ./ gradient(time(:));
 
 Q_pas = simOut.Q_pas.signals.values;
 Q_pat = simOut.Q_pat.signals.values;
@@ -365,8 +373,8 @@ set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
 
 figure
 subplot(3,1,1)
-plot(time, Q_organs);
-title('Q_{o}');
+plot(time,Q_organs);
+title('Q_o');
 xlabel('Time (s)');
 ylabel('Flow Rate (mL/s)');
 
