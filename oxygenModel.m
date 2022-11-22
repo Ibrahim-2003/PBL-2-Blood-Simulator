@@ -20,7 +20,8 @@ function oxygenModel
 
     figure;
     load("Q_left_heart.mat");
-    plot(t,Q_left_heart)
+    load("time.mat");
+    plot(time,Q_left_heart)
     %x = linspace(0,20,250);
     %y = deval(sol,x);
 
