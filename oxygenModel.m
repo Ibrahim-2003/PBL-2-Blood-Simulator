@@ -13,7 +13,7 @@ function oxygenModel
     %ho = heart(init);
     %bo = brain(ho);
     
-    tspan = 0:0.0001:0.1120;
+    tspan = 0:0.0001:10;
     y0 = 975;
     [t,y] = ode45(@heartoxygencons,tspan,y0);
     plot(t,y)
