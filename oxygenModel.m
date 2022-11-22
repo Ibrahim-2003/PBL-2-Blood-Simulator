@@ -13,10 +13,14 @@ function oxygenModel
     %ho = heart(init);
     %bo = brain(ho);
     
-    tspan = 0:0.0001:10;
-    y0 = 975;
+    tspan = 0:0.0001:15;
+    y0 = 25.935;
     [t,y] = ode45(@heartoxygencons,tspan,y0);
     plot(t,y)
+
+    figure;
+    load("Q_left_heart.mat");
+    plot(t,Q_left_heart)
     %x = linspace(0,20,250);
     %y = deval(sol,x);
 
@@ -133,11 +137,12 @@ function dy = heartoxygencons(t,y)
 
     %trying the ODE
     %syms O2(t) OP(t) Qdot(t) sigmaO2 t
-    sigmaO2 = (oconca - (OP0/flow))/975;
+    
     OP = -0.3;
-    %disp(size(Q_left_heart))
     load("Q_left_heart.mat");
+    %disp(size(Q_left_heart))
     Qdot = Q_left_heart(round(t/0.0001,0)+1);
+    sigmaO2 = (oconca - (OP0/Qdot))/975;
     dy = (OP + Qdot.*(oconca-sigmaO2.*y))./331;
 end
 
