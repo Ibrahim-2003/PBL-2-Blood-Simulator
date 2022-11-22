@@ -1,7 +1,7 @@
 % PBL Team 1, BIOE 252, Fall 2022, PBL 2: Modeling Blood Flow
 % oxygenModel.m
 % Models O2 concentration through the human body in different conditions
-% Last modified: 10/31/22
+% Last modified: 11/22/22
 
 function oxygenModel
     %the driver
@@ -14,14 +14,13 @@ function oxygenModel
     %bo = brain(ho);
     
     tspan = 0:0.0001:15;
-    y0 = 25.935;
+    y0 = 975;
     [t,y] = ode45(@heartoxygencons,tspan,y0);
     plot(t,y)
 
     figure;
     load("Q_left_heart.mat");
-    load("time.mat");
-    plot(time,Q_left_heart)
+    plot(t,Q_left_heart)
     %x = linspace(0,20,250);
     %y = deval(sol,x);
 
