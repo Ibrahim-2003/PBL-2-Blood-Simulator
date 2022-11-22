@@ -35,8 +35,8 @@ function dy = heartoxygencons(t,y)
     load("Q_left_heart.mat"); %this is from simulink
 
     Qdot = Q_left_heart(round(t/0.0001,0)+1); %flow rate
-    sigmaO2 = (oconcv - (OP0/Qdot))/975; %partition coefficient?
+    sigmaO2 = (oconca - (OP0/Qdot))/25.935; %partition coefficient?
 
     %the actual ode
-    dy = (OP + Qdot.*(oconcv-sigmaO2.*y))./331;
+    dy = (OP + Qdot.*(oconca-sigmaO2.*y))./331;
 end
