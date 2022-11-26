@@ -1,13 +1,12 @@
-
-v1l = '10';
-v2l = '170';
+v1l = '120';
+v2l = '10';
 tdl = '0';
 tfl = '0.5';
 trl = '0.5';
 pwl = '0.25';
 perl = '1.5';
-v1r = '4';
-v2r = '50';
+v1r = '25';
+v2r = '4';
 tdr = '0';
 tfr = '0.5';
 trr = '0.5';
@@ -54,6 +53,7 @@ R_pvn = '0.006';
                             R_pas, L_pas, C_pat, R_pat, L_pat, R_par, R_pcp,...
                             C_pvn, R_pvn);
                         
+                        
 save('time.mat','time','-mat')
 save('Q_left_heart.mat','Q_left_heart','-mat')
 save('Q_right_heart.mat','Q_right_heart','-mat')
@@ -61,6 +61,7 @@ save('Q_sas.mat','Q_sas','-mat')
 save('Q_sat.mat','Q_sat','-mat')
 save('Q_sar.mat','Q_sar','-mat')
 save('Q_scp.mat','Q_scp','-mat')
+save('Q_svn.mat','Q_svn','-mat')
 save('Q_organs.mat','Q_organs','-mat')
 save('Q_brain.mat','Q_brain','-mat')
 save('Q_kidney.mat','Q_kidney','-mat')
@@ -73,14 +74,14 @@ save('Q_pcp.mat','Q_pcp','-mat')
 save('Q_pvn.mat','Q_pvn','-mat')
 
 
-plot_signals(time, Q_right_heart, Q_left_heart, V_left_heart,...
-            V_right_heart, P_right_heart, P_left_heart, Q_sas, Q_sat,...
-            Q_sar, Q_scp, V_sas, V_sat, V_sar, V_scp, P_sas, P_sat,...
-            P_sar, P_scp, Q_svn, V_svn, P_svn, Q_organs, V_organs,...
-            P_organs, Q_brain, Q_kidney, Q_spleen, Q_liver, V_brain,...
-            V_kidney, V_spleen, V_liver, Q_pas, Q_pat, Q_par, Q_pcp,...
-            V_pas, V_pat, V_par, V_pcp, P_pas, P_pat, P_par, P_pcp,...
-            Q_pvn, V_pvn, P_pvn);
+% plot_signals(time, Q_right_heart, Q_left_heart, V_left_heart,...
+%             V_right_heart, P_right_heart, P_left_heart, Q_sas, Q_sat,...
+%             Q_sar, Q_scp, V_sas, V_sat, V_sar, V_scp, P_sas, P_sat,...
+%             P_sar, P_scp, Q_svn, V_svn, P_svn, Q_organs, V_organs,...
+%             P_organs, Q_brain, Q_kidney, Q_spleen, Q_liver, V_brain,...
+%             V_kidney, V_spleen, V_liver, Q_pas, Q_pat, Q_par, Q_pcp,...
+%             V_pas, V_pat, V_par, V_pcp, P_pas, P_pat, P_par, P_pcp,...
+%             Q_pvn, V_pvn, P_pvn);
 
 
 function [time, Q_right_heart, Q_left_heart, V_left_heart,...
@@ -183,7 +184,7 @@ set_param('CirculationCircuitv2021_v3/Heart_R', 'TF', trr);
 set_param('CirculationCircuitv2021_v3/Heart_R', 'pW', pwr);
 set_param('CirculationCircuitv2021_v3/Heart_R', 'PER', perr);
 
-simOut=sim('CirculationCircuitv2021_v3', 'StartTime','0','StopTime','20',...
+simOut=sim('CirculationCircuitv2021_v3', 'StartTime','0','StopTime','60',...
             'FixedStep','0.0001'); % Loads and runs model
 
 % Reads in results of Simulink model
@@ -220,7 +221,7 @@ Req = 1/((1/str2double(R_liver)) + (1/str2double(R_spleen)) + ...
 
 V_brain = (V_left_heart + V_right_heart).*0.15;
 V_kidney = (V_left_heart + V_right_heart).*0.25;
-V_spleen = (V_left_heart + V_right_heart).*0.10;
+V_spleen = (V_left_heart + V_right_heart).*0.03;
 V_liver = (V_left_heart + V_right_heart).*0.20;
 V_organs = (V_left_heart + V_right_heart);
 
