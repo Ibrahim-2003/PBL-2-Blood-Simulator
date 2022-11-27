@@ -48,28 +48,100 @@ HR = 0.18*LBNP + HR0;
 
 end
 
-function CO = cardiacOutput(volume)
-%Calculates cardiac output adjusted for blood loss 
+function CO = cardiacOutputFraction(volume)
+%Calculates fractional change in cardiac output adjusted for blood loss 
 %Output:
-    %CO - cardiac output fractional change
+    %CO - cardiac output fractional change (multiply with baseline cardiac
+    %output for adjusted cardiac output
 %Inputs: 
     
     %Volume - blood volume
+
+
 BL = 5500 - volume; %Calculate blood loss
 LBNP = BL / 17.2619; %Convert blood loss to LBNP equivalent
 CO = -0.0075*LBNP + 1;
 end
 
 
-function Q = heartFlow(Q0,volume)
-%Adjusts blood flow rate to the heart
-CO = cardiacOutput(volume);
-Q = Q0 * CO; %Blood flow change to the heartis 1:1 with to cardiac output change
+function [Q,VO2] = heartDynamic(volume)
+%Calcualates fractional changes for organ blood flow and oxygen consumption
+%based on the current blood volume
+%Outputs:
+    %Q - the fractional adjustment coefficient for heart rate
+    %VO2 - the fractional adjustment coefficeint for oxygen consumption
+%Inputs: 
+    %volume - current blood volume in the body (not blood lost!)
 
+%Adjusts blood flow rate to the heart
+CO = cardiacOutputFraction(volume);
+Q = CO; %Blood flow change to the heart is 1:1 with to cardiac output 
+VO2 = 0.382 * CO + 0.618; %oxygen consumption decreases during shock 
 end
 
-function Q = brainFlow(Q0,volume)
-%Adjusts blood flow rate to the heart
-CO = cardiacOutput(volume);
-Q = Q0; %Blood flow change does not change
+function [Q,VO2] = brainDynamic(volume)
+%Calcualates fractional changes for organ blood flow and oxygen consumption
+%based on the current blood volume
+%Outputs:
+    %Q - the fractional adjustment coefficient for heart rate
+    %VO2 - the fractional adjustment coefficeint for oxygen consumption
+%Inputs: 
+    %volume - current blood volume in the body (not blood lost!)
+
+CO = cardiacOutputFraction(volume);
+
+
+Q = 1; %Blood flow change does not change
+VO2 = (CO * -1.5 +2.5); %oxygen consumption increases during shock
 end
+
+function Q = lungDynamic(volume)
+%Calcualates fractional changes for organ blood flow and oxygen consumption
+%based on the current blood volume
+%Outputs:
+    %Q - the fractional adjustment coefficient for heart rate
+    %VO2 - the fractional adjustment coefficeint for oxygen consumption
+%Inputs: 
+    %volume - current blood volume in the body (not blood lost!)
+
+CO = cardiacOutputFraction(volume);
+fractionalVolume = volume / 5500;
+Q = fractionalVolume * 2.1205 - 1.1259; %Blood flow change does not change
+
+%Did not include lung fractional oxygen consumption because assumes same
+end
+
+
+function [Q,VO2] = liverDyanmic(volume)
+%Calcualates fractional changes for organ blood flow and oxygen consumption
+%based on the current blood volume
+%Outputs:
+    %Q - the fractional adjustment coefficient for heart rate
+    %VO2 - the fractional adjustment coefficeint for oxygen consumption
+%Inputs: 
+    %volume - current blood volume in the body (not blood lost!)
+
+CO = cardiacOutputFraction(volume);
+
+Q = CO; 
+VO2 = CO * 1.7 - 0.7;
+end
+
+function [Q,VO2] = kidneyDynamic(volume)
+%Calcualates fractional changes for organ blood flow and oxygen consumption
+%based on the current blood volume
+%Outputs:
+    %Q - the fractional adjustment coefficient for heart rate
+    %VO2 - the fractional adjustment coefficeint for oxygen consumption
+%Inputs: 
+    %volume - current blood volume in the body (not blood lost!)
+
+CO = cardiacOutputFraction(volume);
+
+Q = CO * 1.82 - 0.82; 
+VO2 = CO * 1.26 - 0.26; 
+end
+
+
+
+
