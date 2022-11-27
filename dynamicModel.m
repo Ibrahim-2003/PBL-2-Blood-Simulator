@@ -5,7 +5,11 @@ function dynamicModel
     HR = heartRate(volume,60);
     figure;
     plot(t,HR)
-   
+
+    
+  
+    %disp(mean(Q_left_heart(2500:end)))
+
    
 end
 
@@ -44,15 +48,28 @@ HR = 0.18*LBNP + HR0;
 
 end
 
-function CO = cardiacOutput(CO0,volume)
+function CO = cardiacOutput(volume)
 %Calculates cardiac output adjusted for blood loss 
 %Output:
-    %CO - adjusted cardiac output
+    %CO - cardiac output fractional change
 %Inputs: 
-    %CO0 - baseline cardiac output
+    
     %Volume - blood volume
 BL = 5500 - volume; %Calculate blood loss
 LBNP = BL / 17.2619; %Convert blood loss to LBNP equivalent
-CO = 0.18*LBNP + HR0;
+CO = -0.0075*LBNP + 1;
 end
 
+
+function Q = heartFlow(Q0,volume)
+%Adjusts blood flow rate to the heart
+CO = cardiacOutput(volume);
+Q = Q0 * CO; %Blood flow change to the heartis 1:1 with to cardiac output change
+
+end
+
+function Q = brainFlow(Q0,volume)
+%Adjusts blood flow rate to the heart
+CO = cardiacOutput(volume);
+Q = Q0; %Blood flow change does not change
+end
