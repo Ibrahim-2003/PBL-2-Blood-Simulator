@@ -303,6 +303,7 @@ ylabel('Blood Pressure (mmHg)');
 
 sgtitle('Heart Blood Flow Dynamics');
 set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
+saveas(gcf, 'Heart Blood Flow Dynamics.png');
 
 
 % ----------------------------------------------------------
@@ -383,6 +384,7 @@ ylabel('Blood Pressure (mmHg)');
 
 sgtitle('Systemic Circuit Arterial Blood Flow Dynamics');
 set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
+saveas(gcf, 'Systemic Circuit Arterial Blood Flow Dynamics.png');
 
 % ----------------------------------------------------------
 % Systemic Venous Loop Dynamics
@@ -409,6 +411,7 @@ ylabel('Blood Pressure (mmHg)');
 
 sgtitle("Systemic Circuit Venous Blood Flow Dynamics");
 set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
+saveas(gcf, "Systemic Circuit Venous Blood Flow Dynamics.png");
 
 % ----------------------------------------------------------
 % Organ Dynamics
@@ -435,6 +438,7 @@ ylabel('Blood Pressure (mmHg)');
 
 sgtitle("Total Organ Blood Flow Dynamics");
 set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
+saveas(gcf, "Total Organ Blood Flow Dynamics.png");
 
 figure
 subplot(4,2,1)
@@ -487,6 +491,7 @@ ylabel('Blood Volume (mL)');
 
 sgtitle("Specific Organ Blood Flow Dynamics");
 set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
+saveas(gcf, "Specific Organ Blood Flow Dynamics.png");
 
 % ----------------------------------------------------------
 % Pulmonary Circuit Arterial Dynamics
@@ -567,6 +572,7 @@ ylabel('Blood Pressure (mmHg)');
 
 sgtitle('Pulmonary Circuit Arterial Blood Flow Dynamics');
 set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
+saveas(gcf, 'Pulmonary Circuit Arterial Blood Flow Dynamics.png');
 
 % ----------------------------------------------------------
 % Pulmonary Circuit Venous Dynamics
@@ -593,5 +599,6 @@ ylabel('Blood Pressure (mmHg)');
 
 sgtitle("Pulmonary Circuit Venous Blood Flow Dynamics");
 set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
+saveas(gcf, "Pulmonary Circuit Venous Blood Flow Dynamics.png");
 
 end

@@ -293,7 +293,8 @@ Vt0 = 5.5E3; % mL
 I = @(t) -25*t*(t<=60); % Loses 25mL/s for 1 minute
 
 % Defining Unknowns
-% Ptil(t) Pcs(t)...
+% Fol(t) Fsa(t)  
+% Prv(t) Ptil(t) Pcs(t)...
 %     fcs(t) fes(t) fev(t) sigma_Emaxrv(t) sigma_Emaxlv(t) sigma_Rsp(t) sigma_Rep(t) sigma_Vusv(t)...
 %     sigma_Vuev(t) delta_Emaxrv(t) delta_Emaxlv(t) delta_Rsp(t) delta_Rep(t) delta_Vusv(t)...
 %     delta_Vuev(t) sigma_Ts(t) delta_Ts(t) sigma_Tv(t) delta_Tv(t) Vt(t) tau Gb
@@ -341,11 +342,9 @@ dVrv = y(40);
 For = y(41);
 Rrv = y(42);
 Pmaxrv = y(43);
-Prv = y(44);
-Ptil = y(45);
-dPtil = y(46);
-Pcs = y(47);
-dPcs = y(48);
+
+
+
 
 
 

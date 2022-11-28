@@ -1,19 +1,17 @@
-v1l = '80';
-v2l = '150';
-tdl = '0.5';
-tfl = '0.15';
-trl = '0.25';
-pwl = '0.4';
-perl = '1';
-
-v1r = '4';
-v2r = '25';
-tdr = '0.5';
-tfr = '0.15';
-trr = '0.25';
-pwr = '0.4';
-perr = '1';
-
+v1l = '120';
+v2l = '10';
+tdl = '0';
+tfl = '0.5';
+trl = '0.5';
+pwl = '0.25';
+perl = '1.5';
+v1r = '25';
+v2r = '4';
+tdr = '0';
+tfr = '0.5';
+trr = '0.5';
+pwr = '0.25';
+perr = '1.5';
 C_sas = '0.08';
 L_sas = '0.000062';
 R_sas = '0.003';
@@ -23,10 +21,10 @@ R_sat = '0.05';
 R_sar = '0.5';
 R_scp = '0.52';
 
-R_brain = '0.908336';
-R_liver = '0.681252';
-R_spleen = '4.54168';
-R_kidney = '0.592393';
+R_brain = '6.814';
+R_liver = '5.4';
+R_spleen = '0.28865';
+R_kidney = '4.91';
 
 R_svn = '0.075';
 C_pas = '0.18';
@@ -39,7 +37,6 @@ R_par = '0.05';
 R_pcp = '0.25';
 C_pvn = '20.5';
 R_pvn = '0.006';
-duration = '10';
 
 [time, Q_right_heart, Q_left_heart, V_left_heart,...
             V_right_heart, P_right_heart, P_left_heart, Q_sas, Q_sat,...
@@ -54,7 +51,7 @@ duration = '10';
                             C_sat, R_sat, R_sar, R_scp, R_brain, R_liver,...
                             R_spleen, R_kidney, R_svn, C_pas,...
                             R_pas, L_pas, C_pat, R_pat, L_pat, R_par, R_pcp,...
-                            C_pvn, R_pvn, duration);
+                            C_pvn, R_pvn);
                         
                         
 save('time.mat','time','-mat')
@@ -77,14 +74,14 @@ save('Q_pcp.mat','Q_pcp','-mat')
 save('Q_pvn.mat','Q_pvn','-mat')
 
 
-plot_signals(time, Q_right_heart, Q_left_heart, V_left_heart,...
-            V_right_heart, P_right_heart, P_left_heart, Q_sas, Q_sat,...
-            Q_sar, Q_scp, V_sas, V_sat, V_sar, V_scp, P_sas, P_sat,...
-            P_sar, P_scp, Q_svn, V_svn, P_svn, Q_organs, V_organs,...
-            P_organs, Q_brain, Q_kidney, Q_spleen, Q_liver, V_brain,...
-            V_kidney, V_spleen, V_liver, Q_pas, Q_pat, Q_par, Q_pcp,...
-            V_pas, V_pat, V_par, V_pcp, P_pas, P_pat, P_par, P_pcp,...
-            Q_pvn, V_pvn, P_pvn);
+% plot_signals(time, Q_right_heart, Q_left_heart, V_left_heart,...
+%             V_right_heart, P_right_heart, P_left_heart, Q_sas, Q_sat,...
+%             Q_sar, Q_scp, V_sas, V_sat, V_sar, V_scp, P_sas, P_sat,...
+%             P_sar, P_scp, Q_svn, V_svn, P_svn, Q_organs, V_organs,...
+%             P_organs, Q_brain, Q_kidney, Q_spleen, Q_liver, V_brain,...
+%             V_kidney, V_spleen, V_liver, Q_pas, Q_pat, Q_par, Q_pcp,...
+%             V_pas, V_pat, V_par, V_pcp, P_pas, P_pat, P_par, P_pcp,...
+%             Q_pvn, V_pvn, P_pvn);
 
 
 function [time, Q_right_heart, Q_left_heart, V_left_heart,...
@@ -100,7 +97,7 @@ function [time, Q_right_heart, Q_left_heart, V_left_heart,...
                             C_sat, R_sat, R_sar, R_scp, R_brain, R_liver,...
                             R_spleen, R_kidney, R_svn, C_pas,...
                             R_pas, L_pas, C_pat, R_pat, L_pat, R_par, R_pcp,...
-                            C_pvn, R_pvn, duration)
+                            C_pvn, R_pvn)
 % ----------------------------------------------------------
 % Function Description:
 % This function runs the simulation and plots the results. Takes in initial
@@ -187,7 +184,7 @@ set_param('CirculationCircuitv2021_v3/Heart_R', 'TF', trr);
 set_param('CirculationCircuitv2021_v3/Heart_R', 'pW', pwr);
 set_param('CirculationCircuitv2021_v3/Heart_R', 'PER', perr);
 
-simOut=sim('CirculationCircuitv2021_v3', 'StartTime','0','StopTime',duration,...
+simOut=sim('CirculationCircuitv2021_v3', 'StartTime','0','StopTime','60',...
             'FixedStep','0.0001'); % Loads and runs model
 
 % Reads in results of Simulink model
@@ -217,27 +214,22 @@ V_svn = simOut.V_svn.signals.values;
 P_svn = simOut.P_svn.signals.values;
 
 P_organs = simOut.P_organs.signals.values;
+V_organs = zeros(length(P_organs),1);
 
 Req = 1/((1/str2double(R_liver)) + (1/str2double(R_spleen)) + ...
         (1/str2double(R_kidney)) + (1/str2double(R_brain)));
 
-% V_brain = (V_left_heart + V_right_heart).*0.15;
-% V_kidney = (V_left_heart + V_right_heart).*0.25;
-% V_spleen = (V_left_heart + V_right_heart).*0.03;
-% V_liver = (V_left_heart + V_right_heart).*0.20;
-% V_organs = (V_left_heart + V_right_heart);
+V_brain = (V_left_heart + V_right_heart).*0.15;
+V_kidney = (V_left_heart + V_right_heart).*0.25;
+V_spleen = (V_left_heart + V_right_heart).*0.03;
+V_liver = (V_left_heart + V_right_heart).*0.20;
+V_organs = (V_left_heart + V_right_heart);
 
-Q_brain = P_organs ./ str2double(R_brain);
-Q_kidney = P_organs ./ str2double(R_kidney);
-Q_spleen = P_organs ./ str2double(R_spleen);
-Q_liver = P_organs ./ str2double(R_liver);
-Q_organs = P_organs ./ Req;
-
-V_brain = mean(Q_brain)*str2double(duration);
-V_kidney = mean(Q_kidney)*str2double(duration);
-V_spleen = mean(Q_spleen)*str2double(duration);
-V_liver = mean(Q_liver)*str2double(duration);
-V_organs = mean(Q_organs)*str2double(duration);
+Q_brain = gradient(V_brain(:)) ./ gradient(time(:));
+Q_kidney = gradient(V_kidney(:)) ./ gradient(time(:));
+Q_spleen = gradient(V_spleen(:)) ./ gradient(time(:));
+Q_liver = gradient(V_liver(:)) ./ gradient(time(:));
+Q_organs = gradient(V_organs(:)) ./ gradient(time(:));
 
 Q_pas = simOut.Q_pas.signals.values;
 Q_pat = simOut.Q_pat.signals.values;
@@ -310,8 +302,8 @@ xlabel('Time (s)');
 ylabel('Blood Pressure (mmHg)');
 
 sgtitle('Heart Blood Flow Dynamics');
-% set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
-saveas(gcf, 'Heart Blood Flow Dynamics.png');
+set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
+saveas(gcf, 'Heart Blood Flow Dynamics.pn');
 
 
 % ----------------------------------------------------------
@@ -391,9 +383,7 @@ xlabel('Time (s)');
 ylabel('Blood Pressure (mmHg)');
 
 sgtitle('Systemic Circuit Arterial Blood Flow Dynamics');
-% set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
-
-saveas(gcf, 'Systemic Circuit Arterial Blood Flow Dynamics.png');
+set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
 
 % ----------------------------------------------------------
 % Systemic Venous Loop Dynamics
@@ -419,58 +409,85 @@ xlabel('Time (s)');
 ylabel('Blood Pressure (mmHg)');
 
 sgtitle("Systemic Circuit Venous Blood Flow Dynamics");
-% set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
-saveas(gcf, "Systemic Circuit Venous Blood Flow Dynamics.png");
+set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
 
 % ----------------------------------------------------------
 % Organ Dynamics
 % ----------------------------------------------------------
 
 figure
-subplot(2,1,1)
+subplot(3,1,1)
 plot(time,Q_organs);
 title('Q_o');
 xlabel('Time (s)');
 ylabel('Flow Rate (mL/s)');
 
-subplot(2,1,2)
+subplot(3,1,2)
+plot(time, V_organs);
+title('V_{o}');
+xlabel('Time (s)');
+ylabel('Blood Volume (mL)');
+
+subplot(3,1,3)
 plot(time, P_organs);
 title('P_{o}');
 xlabel('Time (s)');
 ylabel('Blood Pressure (mmHg)');
 
 sgtitle("Total Organ Blood Flow Dynamics");
-% set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
-saveas(gcf, "Total Organ Blood Flow Dynamics.png");
+set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
 
 figure
-subplot(2,2,1)
+subplot(4,2,1)
 plot(time, Q_brain);
 title('Q_{brain}');
 xlabel('Time (s)');
 ylabel('Flow Rate (mL/s)');
 
-subplot(2,2,2)
+subplot(4,2,2)
+plot(time, V_brain);
+title('V_{brain}');
+xlabel('Time (s)');
+ylabel('Blood Volume (mL)');
+
+subplot(4,2,3)
 plot(time, Q_kidney);
 title('Q_{kidney}');
 xlabel('Time (s)');
 ylabel('Flow Rate (mL/s)');
 
-subplot(2,2,3)
+subplot(4,2,4)
+plot(time, V_kidney);
+title('V_{kidney}');
+xlabel('Time (s)');
+ylabel('Blood Volume (mL)');
+
+subplot(4,2,5)
 plot(time, Q_liver);
 title('Q_{liver}');
 xlabel('Time (s)');
 ylabel('Flow Rate (mL/s)');
 
-subplot(2,2,4)
+subplot(4,2,6)
+plot(time, V_liver);
+title('V_{liver}');
+xlabel('Time (s)');
+ylabel('Blood Volume (mL)');
+
+subplot(4,2,7)
 plot(time, Q_spleen);
 title('Q_{slpeen}');
 xlabel('Time (s)');
 ylabel('Flow Rate (mL/s)');
 
+subplot(4,2,8)
+plot(time, V_spleen);
+title('V_{spleen}');
+xlabel('Time (s)');
+ylabel('Blood Volume (mL)');
+
 sgtitle("Specific Organ Blood Flow Dynamics");
-% set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
-saveas(gcf, "Specific Organ Blood Flow Dynamics.png");
+set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
 
 % ----------------------------------------------------------
 % Pulmonary Circuit Arterial Dynamics
@@ -550,8 +567,7 @@ xlabel('Time (s)');
 ylabel('Blood Pressure (mmHg)');
 
 sgtitle('Pulmonary Circuit Arterial Blood Flow Dynamics');
-% set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
-saveas(gcf, 'Pulmonary Circuit Arterial Blood Flow Dynamics.png');
+set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
 
 % ----------------------------------------------------------
 % Pulmonary Circuit Venous Dynamics
@@ -577,11 +593,6 @@ xlabel('Time (s)');
 ylabel('Blood Pressure (mmHg)');
 
 sgtitle("Pulmonary Circuit Venous Blood Flow Dynamics");
-% set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
-saveas(gcf, "Pulmonary Circuit Venous Blood Flow Dynamics.png");
-
-fprintf("Cardiac Output: %0.3f mL\nKidney Volume: %0.3f mL\nSpleen Volume: %0.3f mL\nLiver Volume: %0.3f mL\nBrain Volume: %0.3f mL\n\n",...
-    [(V_left_heart(length(V_left_heart)) + V_right_heart(length(V_right_heart))), V_kidney, V_spleen, V_liver, V_brain]);
+set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
 
 end
-
