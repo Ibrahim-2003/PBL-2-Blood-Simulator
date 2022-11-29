@@ -1,18 +1,18 @@
 v1l = '80';
-v2l = '150';
+v2l = '120';
 tdl = '0.5';
-tfl = '0.15';
-trl = '0.25';
-pwl = '0.4';
-perl = '1';
+tfl = '0.5';
+trl = '0.5';
+pwl = '0.25';
+perl = '1.5';
 
 v1r = '4';
 v2r = '25';
 tdr = '0.5';
-tfr = '0.15';
-trr = '0.25';
-pwr = '0.4';
-perr = '1';
+tfr = '0.5';
+trr = '0.5';
+pwr = '0.25';
+perr = '1.5';
 
 C_sas = '0.08';
 L_sas = '0.000062';
@@ -39,7 +39,7 @@ R_par = '0.05';
 R_pcp = '0.25';
 C_pvn = '20.5';
 R_pvn = '0.006';
-duration = '10';
+duration = '60';
 
 [time, Q_right_heart, Q_left_heart, V_left_heart,...
             V_right_heart, P_right_heart, P_left_heart, Q_sas, Q_sat,...
@@ -582,6 +582,28 @@ saveas(gcf, "Pulmonary Circuit Venous Blood Flow Dynamics.png");
 
 fprintf("Cardiac Output: %0.3f mL\nKidney Volume: %0.3f mL\nSpleen Volume: %0.3f mL\nLiver Volume: %0.3f mL\nBrain Volume: %0.3f mL\n\n",...
     [(V_left_heart(length(V_left_heart)) + V_right_heart(length(V_right_heart))), V_kidney, V_spleen, V_liver, V_brain]);
+
+true_kidney = 1100;
+true_spleen = 150;
+true_liver = 1000;
+true_brain = 700;
+true_CO = 6000;
+
+acc_kidney = 100 - abs(((V_kidney - true_kidney) / true_kidney) * 100);
+acc_spleen = 100 - abs(((V_spleen - true_spleen) / true_spleen) * 100);
+acc_liver = 100 - abs(((V_liver - true_liver) / true_liver) * 100);
+acc_brain = 100 - abs(((V_brain - true_brain) / true_brain) * 100);
+acc_CO = 100 - abs((((V_left_heart(length(V_left_heart))...
+    + V_right_heart(length(V_right_heart))) - true_CO) / true_CO) * 100);
+
+fprintf("Cardiac Output Acc: %0.3f%% \nKidney Acc: %0.3f%% \nSpleen Acc: %0.3f%% \nLiver Acc: %0.3f%% \nBrain Acc: %0.3f%% \n\n",...
+    [acc_CO, acc_kidney, acc_spleen, acc_liver, acc_brain]);
+accs = [acc_CO, acc_kidney, acc_spleen, acc_liver, acc_brain];
+avg_acc = abs(mean(accs));
+
+disp('-------------------------')
+
+fprintf("Average Accuracy: %0.3f%% \n\n",avg_acc);
 
 end
 
