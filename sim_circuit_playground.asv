@@ -4,7 +4,7 @@ tdl = '0.5';
 tfl = '0.15';
 trl = '0.25';
 pwl = '0.4';
-perl = '1';
+perl = '0.8';
 
 v1r = '4';
 v2r = '25';
@@ -12,7 +12,7 @@ tdr = '0.5';
 tfr = '0.15';
 trr = '0.25';
 pwr = '0.4';
-perr = '1';
+perr = '0.8';
 
 C_sas = '0.08';
 L_sas = '0.000062';
@@ -39,7 +39,7 @@ R_par = '0.05';
 R_pcp = '0.25';
 C_pvn = '20.5';
 R_pvn = '0.006';
-duration = '10';
+duration = '60';
 
 [time, Q_right_heart, Q_left_heart, V_left_heart,...
             V_right_heart, P_right_heart, P_left_heart, Q_sas, Q_sat,...
@@ -310,7 +310,7 @@ xlabel('Time (s)');
 ylabel('Blood Pressure (mmHg)');
 
 sgtitle('Heart Blood Flow Dynamics');
-% set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
+set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
 saveas(gcf, 'Heart Blood Flow Dynamics.png');
 
 
@@ -391,7 +391,7 @@ xlabel('Time (s)');
 ylabel('Blood Pressure (mmHg)');
 
 sgtitle('Systemic Circuit Arterial Blood Flow Dynamics');
-% set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
+set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
 
 saveas(gcf, 'Systemic Circuit Arterial Blood Flow Dynamics.png');
 
@@ -419,7 +419,7 @@ xlabel('Time (s)');
 ylabel('Blood Pressure (mmHg)');
 
 sgtitle("Systemic Circuit Venous Blood Flow Dynamics");
-% set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
+set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
 saveas(gcf, "Systemic Circuit Venous Blood Flow Dynamics.png");
 
 % ----------------------------------------------------------
@@ -440,7 +440,7 @@ xlabel('Time (s)');
 ylabel('Blood Pressure (mmHg)');
 
 sgtitle("Total Organ Blood Flow Dynamics");
-% set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
+set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
 saveas(gcf, "Total Organ Blood Flow Dynamics.png");
 
 figure
@@ -469,7 +469,7 @@ xlabel('Time (s)');
 ylabel('Flow Rate (mL/s)');
 
 sgtitle("Specific Organ Blood Flow Dynamics");
-% set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
+set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
 saveas(gcf, "Specific Organ Blood Flow Dynamics.png");
 
 % ----------------------------------------------------------
@@ -550,7 +550,7 @@ xlabel('Time (s)');
 ylabel('Blood Pressure (mmHg)');
 
 sgtitle('Pulmonary Circuit Arterial Blood Flow Dynamics');
-% set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
+set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
 saveas(gcf, 'Pulmonary Circuit Arterial Blood Flow Dynamics.png');
 
 % ----------------------------------------------------------
@@ -577,19 +577,11 @@ xlabel('Time (s)');
 ylabel('Blood Pressure (mmHg)');
 
 sgtitle("Pulmonary Circuit Venous Blood Flow Dynamics");
-% set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
-saveas(gcf, "Pulmonary Circuit Venous Blood Flow Dynamics.png");
+set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
+savea
 
 fprintf("Cardiac Output: %0.3f mL\nKidney Volume: %0.3f mL\nSpleen Volume: %0.3f mL\nLiver Volume: %0.3f mL\nBrain Volume: %0.3f mL\n\n",...
     [(V_left_heart(length(V_left_heart)) + V_right_heart(length(V_right_heart))), V_kidney, V_spleen, V_liver, V_brain]);
-
-true_kidney = 1100;
-true_spleen = 150;
-true_liver = 1000;
-true_brain = 700;
-
-acc_kidney = ((V_kidney - true_kidney) / true_kidney) * 100;
-acc_spleen = ((V))
 
 end
 
