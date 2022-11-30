@@ -7,7 +7,7 @@ bloodVolume = shock(0.3,3300,t);
 %Initial arterial concentrations 
 O2_a = 0.195; % mL O2/mL blood
 CO2_a = 0.492; % mL CO2/mL blood
-G_a = 1099.8; % mg glucose/mL blood
+G_a = 1023.3; % mg glucose/mL blood
 C_a = [O2_a CO2_a G_a];
 
 %Heart Values 
@@ -53,7 +53,6 @@ C_body = [0.035042 0.7109339 0];
 
 %Calculate venous concentrations
 C_ven(i,:) = (C_h(i,:).*Q_h(i) + C_l(i,:).*Q_l(i) + C_b(i,:).*Q_b(i) + C_k(i,:).*Q_k(i) + C_lung(i,:).*Q_lung(i))/(44.2660*0.67);
-disp((C_h(i,:).*Q_h(i) + C_l(i,:).*Q_l(i) + C_b(i,:).*Q_b(i) + C_k(i,:).*Q_k(i) + C_lung(i,:).*Q_lung(i))/(44.2660*0.67))
 C_ven(i,:) = (C_ven(i,:) + C_body)/2;
 %disp(C_h(i,:).*Q_h(i) + C_l(i,:).*Q_l(i) + C_b(i,:).*Q_b(i) + C_k(i,:).*Q_k(i) + C_lung(i,:).*Q_lung(i))
 %Pulmonary circulation
@@ -297,7 +296,7 @@ function [Q,VO2] = lungDynamic(volume)
 CO = cardiacOutputFraction(volume);
 fractionalVolume = volume / 5500;
 Q = fractionalVolume * 2.1205 - 1.1259;
-VO2 = 1; %assume lung fractional conversion stays the same
+VO2 = fractionalVolume * 0.33333 + 0.66667; %assume lung fractional conversion stays the same
 
 
 end
