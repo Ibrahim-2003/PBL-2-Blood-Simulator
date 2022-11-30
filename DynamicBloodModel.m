@@ -1,5 +1,5 @@
 function DynamicBloodModel
-t = 0:(0.01):5;
+t = 0:(0.01):100;
 disp(cardiacOutputFraction(3850))
 bloodVolume = shock(0.3,3300,t);
 %plot(t,bloodVolume)
@@ -19,7 +19,8 @@ OC_h = 0.3567;
 RQ_l = 0.8;
 perCO_l = 0.25;
 OC_l = 6.08/60;
-GG_l0 = 0.63657407407407407407407407407407; %mg/s
+GG_l0 = 30000; %mg/s
+%GG_l0 = 2.04293;
 
 %Kidney 
 RQ_k = 0.88;
@@ -52,6 +53,7 @@ C_body = [0.035042 0.7109339 0];
 
 %Calculate venous concentrations
 C_ven(i,:) = (C_h(i,:).*Q_h(i) + C_l(i,:).*Q_l(i) + C_b(i,:).*Q_b(i) + C_k(i,:).*Q_k(i) + C_lung(i,:).*Q_lung(i))/(44.2660*0.67);
+disp((C_h(i,:).*Q_h(i) + C_l(i,:).*Q_l(i) + C_b(i,:).*Q_b(i) + C_k(i,:).*Q_k(i) + C_lung(i,:).*Q_lung(i))/(44.2660*0.67))
 C_ven(i,:) = (C_ven(i,:) + C_body)/2;
 %disp(C_h(i,:).*Q_h(i) + C_l(i,:).*Q_l(i) + C_b(i,:).*Q_b(i) + C_k(i,:).*Q_k(i) + C_lung(i,:).*Q_lung(i))
 %Pulmonary circulation
@@ -72,10 +74,10 @@ xlabel("Time (h)")
 ylabel("Concentration (mL/mL of blood)")
 
 figure;
-plot(t,C_a(1:(end-1),2),'LineWidth',2);
+plot(t,C_a(1:(end-1),3),'LineWidth',2);
 xlabel("Time (h)")
 ylabel("Concentration (mg/mL of blood)")
-figure;
+figure
 %y = C_a(1:(end-1),1).*Q_b';
 
 plot(t,C_a(1:(end-1),1).*Q_l','LineWidth',2)
@@ -234,14 +236,16 @@ Q =  44.2660 *cardiacOutputFraction(volume);
 %Pulmonary circulation values 
 OG_0 = 4.73333; %oxygen entering the blood from the aveoli (mL/s)
 CC_0 = 3.78333;
-fracBloodLoss = 1 - volume/5500;
-
+%fracBloodLoss = 1 - volume/5500;
+fracBlood = volume /5500;
 %24 breadth/min with 30% blood loss, 18 breadth/min normal
-respiratoryRate = (20*fracBloodLoss + 18)/60;
+%respiratoryRate = (20*fracBloodLoss + 18)/60;
 
-OG = OG_0/(18/60)*respiratoryRate;
-CC = CC_0/(18/60)*respiratoryRate;
+%OG = OG_0/(18/60)*respiratoryRate;
+%CC = CC_0/(18/60)*respiratoryRate;
 
+OG = (1.83333*fracBlood - 0.83333)*OG_0;
+CC = (1.83333*fracBlood - 0.83333)*CC_0;
 C_v(1) = C_a(1) + OG/Q;
 C_v(2) = C_a(2) - CC/Q;
 C_v(3) = C_a(3);
@@ -276,7 +280,9 @@ CO = cardiacOutputFraction(volume);
 
 
 Q = 1; %Blood flow change does not change
-VO2 = (CO * -1.5 +2.5); %oxygen consumption increases during shock
+%VO2 = (CO * -1.5 +2.5); %oxygen consumption increases during shock
+BL = volume/5500;
+VO2 = 0.83333*BL + 0.1666667;
 end
 
 function [Q,VO2] = lungDynamic(volume)
