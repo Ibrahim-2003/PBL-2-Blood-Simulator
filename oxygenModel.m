@@ -144,6 +144,7 @@ function dy = heartoxygencons(t,y)
     %disp(size(Q_left_heart))
     Qdot = Q_left_heart(round(t/0.0001,0)+1);
     sigmaO2 = (oconca - (OP0/Qdot))/975;
+    % V_i (d[O2]_i/dt) = -OP_i + Qdot*([O2]_a,i - sigmaO2_i*[O2]_i)
     dy = (OP + Qdot.*(oconca-sigmaO2.*y))./331;
 end
 

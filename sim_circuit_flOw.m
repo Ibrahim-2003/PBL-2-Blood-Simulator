@@ -184,8 +184,13 @@ set_param('CirculationCircuitv2021_v3/Heart_R', 'TF', trr);
 set_param('CirculationCircuitv2021_v3/Heart_R', 'pW', pwr);
 set_param('CirculationCircuitv2021_v3/Heart_R', 'PER', perr);
 
+<<<<<<< Updated upstream
 simOut=sim('CirculationCircuitv2021_v3', 'StartTime','0','StopTime','60',...
             'FixedStep','0.0001'); % Loads and runs model
+=======
+simOut=sim('CirculationCircuitv2021_v3', 'StartTime','0','StopTime','3000',...
+            'FixedStep','0.01'); % Loads and runs model
+>>>>>>> Stashed changes
 
 % Reads in results of Simulink model
 Q_right_heart = simOut.Q_right_heart.signals.values;
