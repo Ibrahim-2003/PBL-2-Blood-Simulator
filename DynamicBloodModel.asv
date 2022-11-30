@@ -1,13 +1,13 @@
 function DynamicBloodModel
-t = 0:0.01:5;
-
+t = 0:(0.01):10;
+disp(cardiacOutputFraction(3850))
 bloodVolume = shock(0.3,3300,t);
 %plot(t,bloodVolume)
 
 %Initial arterial concentrations 
 O2_a = 0.195; % mL O2/mL blood
 CO2_a = 0.492; % mL CO2/mL blood
-G_a = 0.705; % mL glucose/mL blood
+G_a = 1099.8; % mg glucose/mL blood
 C_a = [O2_a CO2_a G_a];
 
 %Heart Values 
@@ -19,11 +19,13 @@ OC_h = 0.3567;
 RQ_l = 0.8;
 perCO_l = 0.25;
 OC_l = 6.08/60;
+GG_l = 0.045399312;
 
 %Kidney 
 RQ_k = 0.88;
-perCO_k = 0.25;
+perCO_k = 0.2;
 OC_k = 0.35;
+GG_k = 
 
 %Brain 
 RQ_b = 0.95;
@@ -38,23 +40,20 @@ perCO_lung = 0.02;
 
 
 
-
-
 for i = 1:length(t)
 
-[C_h(i,:),Q_h(i)] = organConc(C_a(i,:),bloodVolume(i),perCO_h,OC_h,RQ_h,@heartDynamic);
-[C_l(i,:),Q_l(i)] = organConc(C_a(i,:),bloodVolume(i),perCO_l,OC_l,RQ_l,@liverDyanmic);
-[C_b(i,:),Q_b(i)] = organConc(C_a(i,:),bloodVolume(i),perCO_b,OC_b,RQ_b,@brainDynamic);
-[C_k(i,:),Q_k(i)] = organConc(C_a(i,:),bloodVolume(i),perCO_k,OC_k,RQ_k,@heartDynamic);
-[C_lung(i,:),Q_lung(i)] = organConc(C_a(i,:),bloodVolume(i),perCO_lung,OC_lung,RQ_lung,@lungDynamic);
+[C_h(i,:),Q_h(i)] = organConc(C_a(i,:),bloodVolume(i),perCO_h,OC_h,RQ_h,0,@heartDynamic);
+[C_l(i,:),Q_l(i)] = organConc(C_a(i,:),bloodVolume(i),perCO_l,OC_l,RQ_l,GG_l,@liverDyanmic);
+[C_b(i,:),Q_b(i)] = organConc(C_a(i,:),bloodVolume(i),perCO_b,OC_b,RQ_b,0,@brainDynamic);
+[C_k(i,:),Q_k(i)] = organConc(C_a(i,:),bloodVolume(i),perCO_k,OC_k,RQ_k,@kidneyDynamic);
+[C_lung(i,:),Q_lung(i)] = organConc(C_a(i,:),bloodVolume(i),perCO_lung,OC_lung,RQ_lung,0,@lungDynamic);
 
-C_body = [-1.69 0 0];
+C_body = [0.035042 0.7109339 0];
 
 %Calculate venous concentrations
-C_ven(i,:) = (C_h(i,:).*Q_h(i) + C_l(i,:).*Q_l(i) + C_b(i,:).*Q_b(i) + C_k(i,:).*Q_k(i) + C_lung(i,:).*Q_lung(i))/(44.2660*0.72);
-disp(C_ven(i,:))
-C_ven
-disp(C_h(i,:).*Q_h(i) + C_l(i,:).*Q_l(i) + C_b(i,:).*Q_b(i) + C_k(i,:).*Q_k(i) + C_lung(i,:).*Q_lung(i))
+C_ven(i,:) = (C_h(i,:).*Q_h(i) + C_l(i,:).*Q_l(i) + C_b(i,:).*Q_b(i) + C_k(i,:).*Q_k(i) + C_lung(i,:).*Q_lung(i))/(44.2660*0.67);
+C_ven(i,:) = (C_ven(i,:) + C_body)/2;
+%disp(C_h(i,:).*Q_h(i) + C_l(i,:).*Q_l(i) + C_b(i,:).*Q_b(i) + C_k(i,:).*Q_k(i) + C_lung(i,:).*Q_lung(i))
 %Pulmonary circulation
 [C_pul(i,:),Q_pul(i)] = pulmonaryCirculation(C_ven(i,:),bloodVolume(i));
 
@@ -62,15 +61,41 @@ disp(C_h(i,:).*Q_h(i) + C_l(i,:).*Q_l(i) + C_b(i,:).*Q_b(i) + C_k(i,:).*Q_k(i) +
 C_a(i+1,:) = C_pul(i,:);
 
 end
+figure;
 
-plot(t,C_a(1:(end-1),1));
+plot(t,C_a(1:(end-1),1),'LineWidth',2);
+hold on;
+plot(t,C_a(1:(end-1),2),'LineWidth',2);
+hold off;
+legend("Oxygen Concentration","Carbon Dioxide Concentration")
+xlabel("Time (h)")
+ylabel("Concentration (mL/mL of blood)")
+
+
+figure;
+%y = C_a(1:(end-1),1).*Q_b';
+
+plot(t,C_a(1:(end-1),1).*Q_l','LineWidth',2)
+hold on
+plot(t,C_a(1:(end-1),1).*Q_b','LineWidth',2)
+plot(t,C_a(1:(end-1),1).*Q_k','LineWidth',2)
+plot(t,C_a(1:(end-1),1).*Q_lung','LineWidth',2)
+plot(t,C_a(1:(end-1),1).*Q_h','LineWidth',2)
+
+xlabel("Time (h)")
+ylabel("Oyxgen Delivery (mL/s)")
+legend("Liver","Brain","Kidneys","Lungs","Myocardium")
+ hold off
+
+
+
 %plot(t,C_v(1,:))
 
 end
 
 
 
-function [C_v,Q] = organConc(C_a,volume,perc_CO,OC,RQ,dynamicFun)
+function [C_v,Q] = organConc(C_a,volume,perc_CO,OC,RQ,GG,dynamicFun)
 %Calculates the concentration of compoenents in the vein leading draining
 %the organ
 %Inputs:
@@ -93,13 +118,14 @@ Q = 44.2660 * perc_CO * Q_frac;
 
 %Consumption rates (mL/sec)
 VO2 =  OC*VO2_frac; 
+
 VCO2 = RQ * VO2; %0.8 is respiratory quotient 
-VG = VCO2/6; %stoichiometric ratio for glycolysis 
+VG = -((VCO2*0.0425)/6*180.156) + GG; %stoichiometric ratio for glycolysis 
 
 %Accounting equation
 C_v(1) = C_a(1) - VO2/Q;
 C_v(2) = C_a(2) - VCO2/Q;
-C_v(3) = C_a(3) - VG/Q;
+C_v(3) = C_a(3) + VG/Q;
 
 end
 
@@ -167,6 +193,7 @@ volume = normalBV./((normalBV-V0)/V0*exp(-k*t)+1);
 end
 
 function HR = heartRate(volume,HR0)
+
 %Calculates the heart rate based on the current blood volume
 %Outputs:
     %HR - heart rate in bpm
@@ -192,8 +219,10 @@ function CO = cardiacOutputFraction(volume)
 
 
 BL = 5500 - volume; %Calculate blood loss
-LBNP = BL / 17.2619; %Convert blood loss to LBNP equivalent
-CO = -0.0075*LBNP + 1;
+%LBNP = BL / 17.2619; %Convert blood loss to LBNP equivalent
+%CO = -0.0075*LBNP + 1;
+
+CO = -0.0001377 * BL + 1.01219;
 end
 
 function [C_v,Q] = pulmonaryCirculation(C_a,volume)
@@ -215,6 +244,7 @@ C_v(2) = C_a(2) - CC/Q;
 C_v(3) = C_a(3);
 
 end
+
 function [Q,VO2] = heartDynamic(volume)
 %Calcualates fractional changes for organ blood flow and oxygen consumption
 %based on the current blood volume
@@ -276,6 +306,7 @@ CO = cardiacOutputFraction(volume);
 
 Q = CO; 
 VO2 = CO * 1.7 - 0.7;
+
 end
 
 function [Q,VO2] = kidneyDynamic(volume)
