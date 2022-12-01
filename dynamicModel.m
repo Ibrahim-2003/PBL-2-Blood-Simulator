@@ -2,16 +2,16 @@ function dynamicModel
     t = 0:0.01:100;
     volume = bloodVolumeRecovery(0,t,1650);
     plot(t,volume)
-    xlabel('Time (s)');
+    xlabel('Time (hr)');
     ylabel('Blood Volume (mL)');
     title('Blood Volume Recovery');
     saveas(gcf, 'Blood Volume Recovery.png');
     HR = heartRate(volume,60);
     figure;
-    plot(t,HR)
-    xlabel('Time (s)');
+    plot(t,HR,'LineWidth',1.5)
+    xlabel('Time (hr)');
     ylabel('Heart Rate (BPM)');
-    title('Heart Rate Recovery');
+%     title('Heart Rate Recovery');
     saveas(gcf, 'Heart Rate Recovery.png');
   
     %disp(mean(Q_left_heart(2500:end)))

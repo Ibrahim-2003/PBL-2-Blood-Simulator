@@ -18,10 +18,10 @@ function rbcModel
 %     plot(time,n_rbc)
     n_rbc = spleen(time,n_rbc);
     figure;
-    plot(time,n_rbc)
-    xlabel('Time (min)')
+    plot(time,n_rbc,'LineWidth', 1.5)
+    xlabel('Time (hr)')
     ylabel('Number of RBCs')
-    title('RBC Recovery')
+%     title('RBC Recovery')
     saveas(gcf, 'rbc.png')
 
 end

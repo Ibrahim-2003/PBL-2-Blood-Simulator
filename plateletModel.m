@@ -9,7 +9,7 @@ function plateletModel
     %setting up initial values
     time = (1:200);
     n_platelet = zeros(200,1);
-    n_platelet(1,:) = 1.68E12; 
+    n_platelet(1,:) = 1.18E12; 
     %flow = ones(86400);
     
     %flow_rbc(1,:) = 5.4E9*flow; %initial flow rate
@@ -18,11 +18,11 @@ function plateletModel
 %     plot(time,n_rbc)
     n_platelet = spleen_p(time,n_platelet);
     figure;
-    plot(time,n_platelet)
+    plot(time,n_platelet,'LineWidth', 1.5)
     
-    xlabel('Time (min)')
+    xlabel('Time (hr)')
     ylabel('Number of Platelets')
-    title('Platelet Recovery')
+%     title('Platelet Recovery')
     saveas(gcf, 'platelet.png')
 
 end
