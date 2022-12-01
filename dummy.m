@@ -1,12 +1,11 @@
 function dummy
 
-square(@log, exp(3))
-disp(exp(1))
+load('Q_left_heart.mat');
 
-end
+t = 1:length(Q_left_heart);
+plot(t,Q_left_heart)
 
-function square = square(fun,x)
-
-square = fun(x)^2;
+Q = Q_left_heart(1000:end);
+mean(Q)
 
 end

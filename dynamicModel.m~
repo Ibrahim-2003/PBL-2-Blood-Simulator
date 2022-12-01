@@ -50,7 +50,7 @@ function HR = heartRate(volume,HR0)
 
 BL = 5500 - volume; %Calculate blood loss
 LBNP = BL / 17.2619; %Convert blood loss to LBNP equivalent
-HR = 0.55*LBNP + HR0;
+HR = 0.18*LBNP + HR0;
 
 end
 

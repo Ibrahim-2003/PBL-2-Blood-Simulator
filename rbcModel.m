@@ -7,9 +7,9 @@ function rbcModel
     %The driver
 
     %setting up initial values
-    time = (1:10000);
-    n_rbc = zeros(10000,1);
-    n_rbc(1,:) = 5.5E12;
+    time = (1:700);
+    n_rbc = zeros(700,1);
+    n_rbc(1,:) = 2.5E13;
     %flow = ones(86400);
     
     %flow_rbc(1,:) = 5.4E9*flow; %initial flow rate
@@ -19,6 +19,10 @@ function rbcModel
     n_rbc = spleen(time,n_rbc);
     figure;
     plot(time,n_rbc)
+    xlabel('Time (min)')
+    ylabel('Number of RBCs')
+    title('RBC Recovery')
+    saveas(gcf, 'rbc.png')
 
 end
 
@@ -29,8 +33,8 @@ end
 % end
 
 function n_rbc = spleen(time,n_rbc)
-    f = 5.555E-4;
-    c = 0.347E9;
+    f = 0.007848;
+    c = 259E9;
 
     for i = 2:length(time)
         n_rbc(i,:) = (1-f)^i .* (n_rbc(1,:) - c/f) + c/f;
