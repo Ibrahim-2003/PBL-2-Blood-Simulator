@@ -63,7 +63,6 @@ C_a(i+1,:) = C_pul(i,:);
 
 end
 figure;
-
 plot(t,C_a(1:(end-1),1),'LineWidth',2);
 hold on;
 plot(t,C_a(1:(end-1),2),'LineWidth',2);
@@ -73,9 +72,9 @@ xlabel("Time (h)")
 ylabel("Concentration (mL/mL of blood)")
 
 figure;
-plot(t,C_a(1:(end-1),3),'LineWidth',2);
+plot(t,C_a(1:(end-1),3)*0.1,'LineWidth',2);
 xlabel("Time (h)")
-ylabel("Concentration (mg/mL of blood)")
+ylabel("Concentration (mg/dL of blood)")
 figure
 %y = C_a(1:(end-1),1).*Q_b';
 
