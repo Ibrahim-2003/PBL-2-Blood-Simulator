@@ -38,6 +38,8 @@ function n_platelet = spleen_p(time,n_platelet)
     c = 35E9;
 
     for i = 2:length(time)
-        n_platelet(i,:) = (1-f)^i .* (n_platelet(1,:) - c/f) + c/f;
+        n_platelet(i,:) = ((1-f)^i .* (n_platelet(1,:) - c/f) + c/f)*(time(i) > 5)...
+            + (c/f)*(time(i) <= 5);
     end
+    n_platelet(1,:) = c/f;
 end

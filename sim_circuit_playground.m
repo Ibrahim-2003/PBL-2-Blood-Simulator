@@ -1,18 +1,18 @@
 v1l = '80';
-v2l = '150';
+v2l = '120';
 tdl = '0.5';
-tfl = '0.15';
-trl = '0.25';
-pwl = '0.4';
-perl = '1';
+tfl = '0.5';
+trl = '0.5';
+pwl = '0.25';
+perl = '1.5';
 
 v1r = '4';
 v2r = '25';
 tdr = '0.5';
-tfr = '0.15';
-trr = '0.25';
-pwr = '0.4';
-perr = '1';
+tfr = '0.5';
+trr = '0.5';
+pwr = '0.25';
+perr = '1.5';
 
 C_sas = '0.08';
 L_sas = '0.000062';
@@ -39,7 +39,7 @@ R_par = '0.05';
 R_pcp = '0.25';
 C_pvn = '20.5';
 R_pvn = '0.006';
-duration = '10';
+duration = '60';
 
 [time, Q_right_heart, Q_left_heart, V_left_heart,...
             V_right_heart, P_right_heart, P_left_heart, Q_sas, Q_sat,...
@@ -85,6 +85,35 @@ plot_signals(time, Q_right_heart, Q_left_heart, V_left_heart,...
             V_kidney, V_spleen, V_liver, Q_pas, Q_pat, Q_par, Q_pcp,...
             V_pas, V_pat, V_par, V_pcp, P_pas, P_pat, P_par, P_pcp,...
             Q_pvn, V_pvn, P_pvn);
+        
+true_brain = 700; %mL/min
+true_lungs = 600; %mL/min
+true_heart = 6000; %mL/min
+true_kidneys = 1100; %mL/min
+true_liver = 1000; %mL/min
+true_spleen = 150; %mL/min
+
+calc_heart = V_left_heart(length(V_left_heart)) + V_right_heart(length(V_right_heart));
+calc_lung = calc_heart * 0.1;
+
+fprintf("Cardiac Output: %0.3f mL\nKidney Volume: %0.3f mL\nSpleen Volume: %0.3f mL\nLiver Volume: %0.3f mL\nBrain Volume: %0.3f mL\nLung Volume: %0.3f mL\n\n",...
+    [calc_heart, V_kidney, V_spleen, V_liver, V_brain, calc_lung]);
+
+acc_heart = 100 - abs((true_heart - calc_heart) / true_heart) * 100;
+acc_lungs = 100 - abs((true_lungs - calc_lung) / true_lungs) * 100;
+acc_brain = 100 - abs((true_brain - V_brain) / true_brain) * 100;
+acc_kidney = 100 - abs((true_kidneys - V_kidney) / true_kidneys) * 100;
+acc_liver = 100 - abs((true_liver - V_liver) / true_liver) * 100;
+acc_spleen = 100 - abs((true_spleen - V_spleen) / true_spleen) * 100;
+
+accs = [acc_heart acc_lungs acc_brain acc_kidney acc_liver acc_spleen];
+
+avg_acc = mean(accs);
+
+fprintf("Cardiac Output Accuracy: %0.3f%%\nLung Accuracy: %0.3f%%\nBrain Accuracy: %0.3f%%\nKidney Accuracy: %0.3f%%\nLiver Accuracy: %0.3f%%\nSpleen Accuracy: %0.3f%%\n\n",...
+    accs);
+
+fprintf("Average Accuracy: %0.3f%%\n\n",avg_acc);
 
 
 function [time, Q_right_heart, Q_left_heart, V_left_heart,...
@@ -109,21 +138,46 @@ function [time, Q_right_heart, Q_left_heart, V_left_heart,...
 
 % ----------------------------------------------------------
 % Variables:
-% C_sas = scalar capacitance value of the systemic aortic sinus modeling
-%         the compliance of the vessel
-% L_sas = scalar inductance value of the systemic aortic sinus modeling the
-%         inertia of the vessel
-% R_sas = scalar resistance value of the systemic aortic sinus modeling the
-%         resistance of blood flow in the vessel
-% L_sat = scalar inductance value of the systemic artery modeling the
-%         inertia of the vessel
-% C_sat = scalar capacitance value of the systemic artery modeling
-%         the compliance of the vessel
-% R_sat = scalar resistance value of the systemic artery modeling the
-%         resistance of blood flow in the vessel
-% R_sar = scalar resistance value of the systemic arterioles modeling the
-%         resistance of blood flow in the vessel
-% ...CONTINUE VARIABLE DEFINITIONS...
+% *** Note - all inputs are string data types ***
+
+%   Heart Values
+%   Heart Pump Prefixes:
+%       - v1 = scalar initial voltage 1 for heart pump
+%       - v2 = scalar initial voltage 2 for heart pump
+%       - td = pulse delay time (in seconds) for heart pump
+%       - tr = pulse rise time (in seconds) for heart pump
+%       - tf = pulse fall time (in seconds) for heart pump
+%   Heart Pump Suffix of l and r denote left or right heart pump
+
+%   Electronic Prefixes
+%       - C = scalar capacitance value of compartment of interest modeling
+%           the compliance of vessel
+%       - L = scalar inductance value of compartment of interest modeling
+%           the inertance of the vessel
+%       - R = scalar resistance value of compartment of interest modeling
+%           the resistance of blood flow
+
+%   Electronic/Hydraulic Suffixes
+%       - sas = systemic aortic sinus
+%       - sat = systemic arteries
+%       - sar = systemic arterioles
+%       - scp = systemic capillaries
+%       - svn = systemic veins
+%       - pas = pulmonary aortic sinus
+%       - pat = pulmonary arteries
+%       - par = pulmonary arterioles
+%       - pcp = pulmonary capillaries
+%       - pvn = pulmonary veins
+
+%   Hydraulic Prefixes
+%       - P = vector of blood pressure values as a function of time
+%       - Q = vector of blood flow values as a function of time
+%       - V = scalar average flow volume
+%       
+%   Additional Variables
+%       - time = vector of time values
+%       - duration = scalar duration of simulation in seconds
+
 % ----------------------------------------------------------
 
 % ----------------------------------------------------------
@@ -187,6 +241,8 @@ set_param('CirculationCircuitv2021_v3/Heart_R', 'TF', trr);
 set_param('CirculationCircuitv2021_v3/Heart_R', 'pW', pwr);
 set_param('CirculationCircuitv2021_v3/Heart_R', 'PER', perr);
 
+% Note: make sure to adjust Simulink settings within Simulink to have a 
+% fixed time step of 0.0001 seconds before running the code.
 simOut=sim('CirculationCircuitv2021_v3', 'StartTime','0','StopTime',duration,...
             'FixedStep','0.0001'); % Loads and runs model
 
@@ -220,12 +276,6 @@ P_organs = simOut.P_organs.signals.values;
 
 Req = 1/((1/str2double(R_liver)) + (1/str2double(R_spleen)) + ...
         (1/str2double(R_kidney)) + (1/str2double(R_brain)));
-
-% V_brain = (V_left_heart + V_right_heart).*0.15;
-% V_kidney = (V_left_heart + V_right_heart).*0.25;
-% V_spleen = (V_left_heart + V_right_heart).*0.03;
-% V_liver = (V_left_heart + V_right_heart).*0.20;
-% V_organs = (V_left_heart + V_right_heart);
 
 Q_brain = P_organs ./ str2double(R_brain);
 Q_kidney = P_organs ./ str2double(R_kidney);
@@ -579,9 +629,6 @@ ylabel('Blood Pressure (mmHg)');
 sgtitle("Pulmonary Circuit Venous Blood Flow Dynamics");
 % set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
 saveas(gcf, "Pulmonary Circuit Venous Blood Flow Dynamics.png");
-
-fprintf("Cardiac Output: %0.3f mL\nKidney Volume: %0.3f mL\nSpleen Volume: %0.3f mL\nLiver Volume: %0.3f mL\nBrain Volume: %0.3f mL\n\n",...
-    [(V_left_heart(length(V_left_heart)) + V_right_heart(length(V_right_heart))), V_kidney, V_spleen, V_liver, V_brain]);
 
 end
 

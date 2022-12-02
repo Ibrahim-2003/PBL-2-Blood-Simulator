@@ -12,6 +12,7 @@ tfr = '0.5';
 trr = '0.5';
 pwr = '0.25';
 perr = '1.5';
+
 C_sas = '0.08';
 L_sas = '0.000062';
 R_sas = '0.003';
@@ -105,22 +106,30 @@ function [time, Q_right_heart, Q_left_heart, V_left_heart,...
 % ----------------------------------------------------------
 
 % ----------------------------------------------------------
-% Variables:
-% C_sas = scalar capacitance value of the systemic aortic sinus modeling
-%         the compliance of the vessel
-% L_sas = scalar inductance value of the systemic aortic sinus modeling the
-%         inertia of the vessel
-% R_sas = scalar resistance value of the systemic aortic sinus modeling the
-%         resistance of blood flow in the vessel
-% L_sat = scalar inductance value of the systemic artery modeling the
-%         inertia of the vessel
-% C_sat = scalar capacitance value of the systemic artery modeling
-%         the compliance of the vessel
-% R_sat = scalar resistance value of the systemic artery modeling the
-%         resistance of blood flow in the vessel
-% R_sar = scalar resistance value of the systemic arterioles modeling the
-%         resistance of blood flow in the vessel
-% ...CONTINUE VARIABLE DEFINITIONS...
+%   Input Variables:
+%   *** Note - all inputs are string data types ***
+%       v1l (string) = scalar  
+
+%   Prefixes
+%       - C = scalar capacitance value of compartment of interest modeling
+%           the compliance of vessel
+%       - L = scalar inductance value of compartment of interest modeling
+%           the inertance of the vessel
+%       - R = scalar resistance value of compartment of interest modeling
+%           the resistance of blood flow
+
+%   Suffixes
+%       - sas = systemic aortic sinus
+%       - sat = systemic arteries
+%       - sar = systemic arterioles
+%       - scp = systemic capillaries
+%       - svn = systemic veins
+%       - pas = pulmonary aortic sinus
+%       - pat = pulmonary arteries
+%       - par = pulmonary arterioles
+%       - pcp = pulmonary capillaries
+%       - pvn = pulmonary veins
+
 % ----------------------------------------------------------
 
 % ----------------------------------------------------------
@@ -184,13 +193,8 @@ set_param('CirculationCircuitv2021_v3/Heart_R', 'TF', trr);
 set_param('CirculationCircuitv2021_v3/Heart_R', 'pW', pwr);
 set_param('CirculationCircuitv2021_v3/Heart_R', 'PER', perr);
 
-<<<<<<< Updated upstream
 simOut=sim('CirculationCircuitv2021_v3', 'StartTime','0','StopTime','60',...
             'FixedStep','0.0001'); % Loads and runs model
-=======
-simOut=sim('CirculationCircuitv2021_v3', 'StartTime','0','StopTime','3000',...
-            'FixedStep','0.01'); % Loads and runs model
->>>>>>> Stashed changes
 
 % Reads in results of Simulink model
 Q_right_heart = simOut.Q_right_heart.signals.values;

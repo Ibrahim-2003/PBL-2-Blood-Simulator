@@ -37,6 +37,8 @@ function n_rbc = spleen(time,n_rbc)
     c = 259E9;
 
     for i = 2:length(time)
-        n_rbc(i,:) = (1-f)^i .* (n_rbc(1,:) - c/f) + c/f;
+        n_rbc(i,:) = ((1-f)^i .* (n_rbc(1,:) - c/f) + c/f)*(time(i) > 5)...
+            + (c/f)*(time(i) <= 5);
     end
+    n_rbc(1,:) = c/f;
 end
