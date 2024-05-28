@@ -1,1 +1,2 @@
 This is a hemodynamic simulation model I created with my team as part of the Fundamentals of Bioengineering BIOE252 course. The model simulates the blood flow rate, blood volume, and chemical composition of blood flowing through different compartments in the body including the brain, heart, lungs, and other organs. Additionally, the model simulates the physiological response to hemorrhagic shock.
+The presentation is located at the file ```Hemorrhagic Shock Model Final.pdf```
